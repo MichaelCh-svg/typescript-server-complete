@@ -1,0 +1,27 @@
+{
+  "name": "typescript-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "del /Q build && npx tsc && cd build && 7z a -tzip src.zip -r && aws lambda update-function-code --function-name tweeter-login-javascript --zip-file fileb://./src.zip 2>&1 > tsc.log && echo Lambda upload command finished, check tsc.log for more details."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
+    "@types/node": "^20.1.2",
+    "@types/uuid": "^9.0.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.332.0",
+    "@aws-sdk/lib-dynamodb": "^3.332.0",
+    "@types/crypto-js": "^4.1.1",
+    "crypto-js": "^4.1.1",
+    "moment": "^2.29.4",
+    "uuid": "^9.0.0"
+  }
+}
