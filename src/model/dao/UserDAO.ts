@@ -36,7 +36,7 @@ export async function putUser(firstName: string, lastName: string, alias: string
     try {
       await ddbDocClient.send(new PutCommand(params));
     } catch (err) {
-      console.log("Error", err);
+      throw err;
     }
   };
 
