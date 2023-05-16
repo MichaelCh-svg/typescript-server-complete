@@ -1,14 +1,39 @@
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
-import { Status } from "../domain/Status";
+import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbDocClient } from "./ClientDynamo";
 
 const TABLE_NAME = 'feed';
 const PRIMARY_KEY = 'followerAlias';
 const SORT_KEY = 'timestamp';
-const FOLLOWER_ALIAS = 'followeeAlias';
+const AUTHOR_ALIAS = 'authorAlias';
 const POST = 'post';
 
-export function putFeeds(followeeAlias: string, post: String, followersAliases: string[], timestamp: number){
+export async function putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
+    const params = {
+                  RequestItems: {
+                    [TABLE_NAME]: createPutFeedRequestBatch(post, authorAlias, followersAliases, timestamp)
+                  }
+                }
+    console.log(params);
+    await ddbDocClient.send(new BatchWriteCommand(params))
+}
+function createPutFeedRequestBatch(post: string, authorAlias: string, followerAliases: string[], timestamp: number){
+    return followerAliases.map(follower => createPutFeedRequest(post, authorAlias, follower, timestamp));
+}
+function createPutFeedRequest(post: string, authorAlias: string, followeeAlias: string, timestamp: number){
+    let item = {
+        [PRIMARY_KEY]: followeeAlias,
+        [SORT_KEY]: timestamp,
+        [AUTHOR_ALIAS]: authorAlias,
+        [POST]: post
+    }
+    let request = {
+        PutRequest: {
+            Item: item
+        }
+    }
+    return request;
+}
+
 //     const allMovies = JSON.parse(fs.readFileSync("moviedata.json", "utf8"));
 //   // Split the table into segments of 25.
 //   const dataSegments = R.splitEvery(25, allMovies);
@@ -41,21 +66,3 @@ export function putFeeds(followeeAlias: string, post: String, followersAliases: 
 //   } catch (error) {
 //     console.log("Error", error);
 //   }
-}
-function createPutFeedRequestBatch(post: string, followeeAlias: string, followerAliases: string[], timestamp: number){
-    return followerAliases.map(follower => createPutFeedRequest(post, follower, followeeAlias, timestamp));
-}
-function createPutFeedRequest(post: string, followerAlias: string, followeeAlias: string, timestamp: number){
-    let item = {
-        [PRIMARY_KEY]: followerAlias,
-        [SORT_KEY]: timestamp,
-        [FOLLOWER_ALIAS]: followeeAlias,
-        [POST]: post
-    }
-    let request = {
-        PutRequest: {
-            Item: item
-        }
-    }
-    return request;
-}
