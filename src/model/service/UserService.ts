@@ -9,16 +9,19 @@ import { SHA256 } from 'crypto-js';
 
 
 export async function login(event: LoginRequest){
-    if(event.username == null){
+    if(event._alias == null){
         throw new Error("[Bad Request] Missing a username");
     } else if(event.password == null) {
         throw new Error("[Bad Request] Missing a password");
     }
     let user = null;
     try{
-        let userData = await getUser(event.username);
-        user = new User(userData.firstName, userData.lastName, userData.alias, userData.imageUrl);
-        return new LoginResponse(true, user, AuthToken.Generate())
+        let userData = await getUser(event._alias);
+        if(userData != undefined){
+            user = new User(userData.firstName, userData.lastName, userData.alias, userData.imageUrl);
+            return new LoginResponse(true, user, AuthToken.Generate())
+        }
+        else throw Error("There is no user with username " + event._alias)
     }
     catch(err){
         throw new Error("[Bad Request] " + (err as Error).message);
@@ -36,7 +39,7 @@ export async function register(event: RegisterRequest){
         let imageUrl = setS3Image(event.imageUrl, event.alias);
         const hashedPassword = SHA256(event.password).toString();
         await putUser(event.firstName, event.lastName, event.alias, hashedPassword, imageUrl);
-        return new LoginResponse(true, new User(event.firstName, event.lastName, event.alias, imageUrl), AuthToken.Generate());
+        return new LoginResponse(true, new User(event.firstName, event.lastName, event.alias, imageUrl), AuthToken.Generate(), imageUrl);
     }
     catch(err){
         throw new Error("[Bad Request] " + (err as Error).message);

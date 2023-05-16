@@ -5,10 +5,10 @@ import { getDAOFolloweesAliases } from "../dao/FollowDAO";
 
 export function postStatus(event: PostStatusRequest){
     let timestamp = new Date().getTime();
-    putStory(event.status.user.alias, timestamp, event.status.post);
-    let hasMorePages = true;
-    while(hasMorePages){
-        let [followeeAliases, hasMorePages] = getDAOFolloweesAliases(event.status.user.alias, 10, "lastFolloweeAlias");
-    }
-    return new Response(true);
+    let j = putStory(event.alias, timestamp, event.post);
+    // let hasMorePages = true;
+    // while(hasMorePages){
+    //     let [followeeAliases, hasMorePages] = getDAOFolloweesAliases(event.status.user.alias, 10, "lastFolloweeAlias");
+    // }
+    return new Response(true, event.alias + " posted " + event.post + " at " + timestamp + "\n" + j);
 }

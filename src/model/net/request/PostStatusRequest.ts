@@ -3,11 +3,13 @@ import { AuthToken } from "../../domain/AuthToken";
 
 export class PostStatusRequest{
 
-    status: Status;
-    authToken: AuthToken | null;
+    alias: string;
+    post: string;
+    token: AuthToken | null;
 
-    constructor(authToken: AuthToken | null, status: Status){
-        this.authToken = authToken;
-        this.status = status;
+    constructor(alias: string, post: string, token: AuthToken | null){
+        this.alias = alias;
+        this.post = post;
+        this.token = token;
     }
 }

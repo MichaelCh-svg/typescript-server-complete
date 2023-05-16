@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
+    "@types/jquery": "^3.5.16",
     "@types/node": "^20.1.2",
     "@types/uuid": "^9.0.1",
     "typescript": "^5.0.4"
@@ -22,6 +23,7 @@
     "@aws-sdk/lib-dynamodb": "^3.332.0",
     "@types/crypto-js": "^4.1.1",
     "crypto-js": "^4.1.1",
+    "jquery": "^3.7.0",
     "moment": "^2.29.4",
     "uuid": "^9.0.0"
   }

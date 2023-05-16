@@ -16,7 +16,7 @@ export async function putStory(alias: string, timestamp: number, post: string) {
       },
     };
     try {
-      await ddbDocClient.send(new PutCommand(params));
+      await ddbDocClient.send(new PutCommand(params)).then(j => j);
     } catch (err) {
       throw err;
     }

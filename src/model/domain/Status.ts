@@ -60,4 +60,10 @@ export class Status {
     public set mentions(value: string[]) {
         this._mentions = value;
     }
+    static fromJSON(json: any) {
+        $.extend(this, json);
+      }
+    fromJSON(json: any) {
+        $.extend(this, json);
+    }
 }

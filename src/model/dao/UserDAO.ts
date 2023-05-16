@@ -13,12 +13,11 @@ export async function getUser (username: String) {
     const params = {
         TableName: TABLE_NAME,
         Key: {
-            PRIMARY_KEY:  username,
+            [PRIMARY_KEY]:  username,
         },
     };
     return await ddbDocClient.send(new GetCommand(params)).then(data => {
-        if(data.Item == undefined) throw Error("There is no user with username " + username)
-        else return data.Item});
+        return data.Item});
 };
 
 export async function putUser(firstName: string, lastName: string, alias: string, password: string, imageUrl: string) {

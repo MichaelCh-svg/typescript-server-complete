@@ -46,4 +46,18 @@ export class User {
     public set imageUrl(value: string) {
         this._imageUrl = value;
     }
+    toJsonString(): string {
+        let json = JSON.stringify(this);
+        Object.keys(this).filter(key => key[0] === "_").forEach(key => {
+            json = json.replace(key, key.substring(1));
+        });
+
+        return json;
+    }
+    static fromJSON(json: any) {
+        $.extend(this, json);
+      }
+    fromJSON(json: any) {
+        $.extend(this, json);
+    }
 }
