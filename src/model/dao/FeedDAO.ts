@@ -3,12 +3,12 @@ import { Status } from "../domain/Status";
 import { ddbDocClient } from "./ClientDynamo";
 
 const TABLE_NAME = 'feed';
-const PRIMARY_KEY = 'followeeAlias';
+const PRIMARY_KEY = 'followerAlias';
 const SORT_KEY = 'timestamp';
-const FOLLOWER_ALIAS = 'followerAlias';
+const FOLLOWER_ALIAS = 'followeeAlias';
 const POST = 'post';
 
-export function putFeeds(status: Status, followeesAliases: string[], timestamp: number){
+export function putFeeds(followeeAlias: string, post: String, followersAliases: string[], timestamp: number){
 //     const allMovies = JSON.parse(fs.readFileSync("moviedata.json", "utf8"));
 //   // Split the table into segments of 25.
 //   const dataSegments = R.splitEvery(25, allMovies);
@@ -42,6 +42,20 @@ export function putFeeds(status: Status, followeesAliases: string[], timestamp: 
 //     console.log("Error", error);
 //   }
 }
-function createPutFeedRequest(status: Status, followerAlias: string, timestamp: number){
-    
+function createPutFeedRequestBatch(post: string, followeeAlias: string, followerAliases: string[], timestamp: number){
+    return followerAliases.map(follower => createPutFeedRequest(post, follower, followeeAlias, timestamp));
+}
+function createPutFeedRequest(post: string, followerAlias: string, followeeAlias: string, timestamp: number){
+    let item = {
+        [PRIMARY_KEY]: followerAlias,
+        [SORT_KEY]: timestamp,
+        [FOLLOWER_ALIAS]: followeeAlias,
+        [POST]: post
+    }
+    let request = {
+        PutRequest: {
+            Item: item
+        }
+    }
+    return request;
 }

@@ -1,3 +1,4 @@
+import { FakeData } from "../../util/FakeData";
 import { getUser, putUser } from "../dao/UserDAO";
 import { setS3Image } from "../dao/s3DAO";
 import { AuthToken } from "../domain/AuthToken";
@@ -36,10 +37,10 @@ export async function register(event: RegisterRequest){
     try{
         let user = await getUser(event.alias);
         if(user != undefined) throw Error("User " + event.alias + " already exists.");
-        let imageUrl = setS3Image(event.imageUrl, event.alias);
+        let imageUrl = await setS3Image(event.imageUrl, event.alias);
         const hashedPassword = SHA256(event.password).toString();
         await putUser(event.firstName, event.lastName, event.alias, hashedPassword, imageUrl);
-        return new LoginResponse(true, new User(event.firstName, event.lastName, event.alias, imageUrl), AuthToken.Generate(), imageUrl);
+        return new LoginResponse(true, new User(event.firstName, event.lastName, event.alias, imageUrl), AuthToken.Generate());
     }
     catch(err){
         throw new Error("[Bad Request] " + (err as Error).message);

@@ -3,12 +3,12 @@ import { Response } from "../net/response/Response";
 import { putStory } from "../dao/StoryDAO";
 import { getDAOFolloweesAliases } from "../dao/FollowDAO";
 
-export function postStatus(event: PostStatusRequest){
+export async function postStatus(event: PostStatusRequest){
     let timestamp = new Date().getTime();
-    let j = putStory(event.alias, timestamp, event.post);
+    await putStory(event.alias, timestamp, event.post);
     // let hasMorePages = true;
     // while(hasMorePages){
     //     let [followeeAliases, hasMorePages] = getDAOFolloweesAliases(event.status.user.alias, 10, "lastFolloweeAlias");
     // }
-    return new Response(true, event.alias + " posted " + event.post + " at " + timestamp + "\n" + j);
+    return new Response(true, event.alias + " posted " + event.post + " at " + timestamp);
 }
