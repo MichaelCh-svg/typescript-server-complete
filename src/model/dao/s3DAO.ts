@@ -20,7 +20,7 @@ export async function setS3Image(imageStringEncodedBase64: string, alias: string
     const client = new S3Client({ region: REGION });
     try{
         await client.send(c);
-        return "https://mechbucket1.s3.us-west-2.amazonaws.com/" + fileName;
+        return "https://" + process.env.BUCKET + ".s3.us-west-2.amazonaws.com/" + fileName;
     }
     catch(error){
         throw error;

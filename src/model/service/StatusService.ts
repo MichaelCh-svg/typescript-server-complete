@@ -7,8 +7,12 @@ import { putFeeds } from "../dao/FeedDAO";
 export async function postStatus(event: PostStatusRequest){
     let timestamp = new Date().getTime();
     await putStory(event.alias, timestamp, event.post);
-    let [followers, hasMorePages] = await getDAOFollowers(event.alias, 0, null);
-    await putFeeds(event.alias, event.post, followers, new Date().getTime());
+    let followers, hasMorePages, lastEvaluatedFollowerAlias = null;
+    hasMorePages = true;
+    while(hasMorePages){
+        [followers, hasMorePages, lastEvaluatedFollowerAlias] = await getDAOFollowers(event.alias, 10, lastEvaluatedFollowerAlias);
+        await putFeeds(event.alias, event.post, followers, timestamp);
+    }
 
     // let hasMorePages = true;
     // while(hasMorePages){

@@ -7,7 +7,6 @@ To set up this project with aws, after cloning the project:
 3. Run the tsc-lambda.sh file. 
 - In a git terminal, run './tsc-lambda.sh'.
 - If you don't have 7-zip installed, make sure to install 7-zip, then add it to the path environment variable in windows since it gets called in the script.
-4. Set the lambda's source as zip file from s3, and select the file uploaded by the tsc-lambda.sh shell.
 4. Add a lambda layer to the lambdas for dependencies not included in the compiled files.
         - These dependences may include moment, uuid, aws-sdk, crypto, dotenv,...
     - Create a lambda layer in aws.

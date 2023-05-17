@@ -8,7 +8,7 @@ const INDEX_NAME = 'follow-index';
 const PRIMARY_KEY = 'followerAlias';
 const SORT_KEY = 'followeeAlias';
 
-export async function getDAOFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[string[], boolean]> {
+export async function getDAOFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[string[], boolean, string | null]> {
     let params;
     if(lastFollowerAlias != undefined){
         params =  {
@@ -44,24 +44,33 @@ export async function getDAOFollowers(followeeAlias: string, limit: number, last
     
       let items : string[] = [];
       let hasMorePages = true;
+      let lastEvaluatedFollowerAlias = null;
       let data;
         try {
             
             data = await ddbClient.send(new QueryCommand(params)).then(data => {
-                hasMorePages = data.LastEvaluatedKey != undefined;
+                if(data.LastEvaluatedKey != undefined){
+                    lastEvaluatedFollowerAlias = data.LastEvaluatedKey.followerAlias.S;
+                }
+                else hasMorePages = false;
+               
                 
                 if(data.Items != undefined){
                     // unfortunately, I can't use s.PRIMARY_KEY.S, because I can't use variables here.
                     // Instead we have to hardcode the value.
                     data.Items.forEach(s => {if (s.followerAlias.S != undefined) items.push(s.followerAlias.S)});
                     // data.Items.forEach(s => console.log(s.followerAlias.S))
-                } 
+                }
+                if(items.length == 0) hasMorePages = false;
+                console.log('has more pages ' + hasMorePages);
+                console.log('data size ' + items.length);
+                if(items.length == 0) hasMorePages = false;
             });
         }
         catch (err) {
             throw err;
             };
-      return [items, hasMorePages];
+      return [items, hasMorePages, lastEvaluatedFollowerAlias];
 
    
         

@@ -8,6 +8,8 @@ const AUTHOR_ALIAS = 'authorAlias';
 const POST = 'post';
 
 export async function putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
+    // trying to batchwrite zero items throws an error
+    if(followersAliases.length == 0) return;
     const params = {
                   RequestItems: {
                     [TABLE_NAME]: createPutFeedRequestBatch(post, authorAlias, followersAliases, timestamp)
