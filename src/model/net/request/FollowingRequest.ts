@@ -2,12 +2,12 @@ import { AuthToken } from "../../domain/AuthToken";
 
 export class FollowingRequest{
 
-    followerAlias: String | null;
+    followerAlias: string;
     authToken: AuthToken | null;
     limit: number;
-    lastFolloweeAlias: String | null;
+    lastFolloweeAlias: string | null;
 
-    constructor(followerAlias: String | null, authToken: AuthToken | null, limit: number, lastFolloweeAlias: String | null){
+    constructor(followerAlias: string, authToken: AuthToken | null, limit: number, lastFolloweeAlias: string | null){
         this.followerAlias = followerAlias;
         this.authToken = authToken;
         this.limit = limit;
