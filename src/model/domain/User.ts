@@ -54,10 +54,10 @@ export class User {
 
         return json;
     }
-    static fromJSON(json: any) {
-        $.extend(this, json);
-      }
-    fromJSON(json: any) {
-        $.extend(this, json);
-    }
+    // static fromJSON(json: any) {
+    //     $.extend(this, json);
+    //   }
+    // fromJSON(json: any) {
+    //     $.extend(this, json);
+    // }
 }

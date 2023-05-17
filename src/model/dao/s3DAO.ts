@@ -1,5 +1,8 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-const BUCKET = "mechbucket1";
+import * as dotenv from 'dotenv'
+dotenv.config()
+const BUCKET = process.env.BUCKET;
+const REGION = process.env.REGION;
 
 export async function setS3Image(imageStringEncodedBase64: string, alias: string){
     // console.log("setS3Image");
@@ -14,7 +17,7 @@ export async function setS3Image(imageStringEncodedBase64: string, alias: string
         ACL: 'public-read',
     }
     const c = new PutObjectCommand(s3Params);
-    const client = new S3Client({ region: "us-west-2" });
+    const client = new S3Client({ region: REGION });
     try{
         await client.send(c);
         return "https://mechbucket1.s3.us-west-2.amazonaws.com/" + fileName;
