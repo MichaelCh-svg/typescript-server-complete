@@ -1,4 +1,3 @@
-import { Status } from "../../domain/Status";
 import { AuthToken } from "../../domain/AuthToken";
 
 export class PostStatusRequest{

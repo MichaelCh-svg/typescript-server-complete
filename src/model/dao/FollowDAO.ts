@@ -62,9 +62,6 @@ export async function getDAOFollowers(followeeAlias: string, limit: number, last
                     // data.Items.forEach(s => console.log(s.followerAlias.S))
                 }
                 if(items.length == 0) hasMorePages = false;
-                console.log('has more pages ' + hasMorePages);
-                console.log('data size ' + items.length);
-                if(items.length == 0) hasMorePages = false;
             });
         }
         catch (err) {
