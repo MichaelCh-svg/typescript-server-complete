@@ -1,5 +1,5 @@
 // Create the DynamoDB service client module using ES6 syntax.
-//random comment
+//funny comment
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import * as dotenv from 'dotenv'

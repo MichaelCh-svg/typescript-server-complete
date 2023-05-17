@@ -1,12 +1,13 @@
 To set up this project with aws, after cloning the project:
 
 1. Run npm i from within the project.
-2. Edit the .env file to match your variables.
+2. Create a .env file using the .env.example template. Edit the .env file to match your variables.
 2. Edit the tsc-lambda.sh file.
     - Make sure that the lambda function names match those of yours.
 3. Run the tsc-lambda.sh file. 
-- In a git terminal, run 'sh tsc-lambda.sh'.
+- In a git terminal, run './tsc-lambda.sh'.
 - If you don't have 7-zip installed, make sure to install 7-zip, then add it to the path environment variable in windows since it gets called in the script.
+4. Set the lambda's source as zip file from s3, and select the file uploaded by the tsc-lambda.sh shell.
 4. Add a lambda layer to the lambdas for dependencies not included in the compiled files.
         - These dependences may include moment, uuid, aws-sdk, crypto, dotenv,...
     - Create a lambda layer in aws.
@@ -18,9 +19,5 @@ To set up this project with aws, after cloning the project:
 
 
 For local testing, run a .ts file using ts-node '[file].ts'.
-
-To install ts-node, run the following commands:
-
-Install ts-node with the 
-npm install -D ts-node
-npm install -D typescript
+Everything in the 'local' folder is excluded from the typescript build compile. The exclude parameters are set in the tsconfig.json file.
+The test.ts file is also excluded from github. These are set in the .gitignore file.
