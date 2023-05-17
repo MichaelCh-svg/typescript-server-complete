@@ -19,8 +19,14 @@ cd build
 
 # zip the contents using 7-zip. This will have to be installed and added to the windows environment system path variable.
 7z a -tzip src.zip -r
-# aws lambda update-function-code --function-name tweeter-login-javascript --zip-file fileb://./src.zip 1> tsc.log
+
+# empty the tsc.log file
+echo '' > tsc.log
+
+# upload to lambda
+# aws lambda update-function-code --function-name tweeter-login-javascript --zip-file fileb://./src.zip 1>> tsc.log
 # use >> to append to tsc.log without erasing the current contents.
-# aws lambda update-function-code --function-name tweeter-postStatus-typescript --zip-file fileb://./src.zip 1>> tsc.log
+
+aws lambda update-function-code --function-name tweeter-postStatus-typescript --zip-file fileb://./src.zip 1>> tsc.log
 aws lambda update-function-code --function-name tweeter-register-javascript --zip-file fileb://./src.zip 1>> tsc.log
-# echo Lambda upload command finished, check build/tsc.log for standard output.
+echo Lambda upload command finished, check build/tsc.log for standard output.
