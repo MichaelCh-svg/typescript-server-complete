@@ -39,11 +39,20 @@ aws lambda update-function-code \
     --s3-bucket $BUCKET \
     --s3-key typescript-complete.zip \
     1>>lambdaupdate.log
+echo lambda 1 uploaded
 aws lambda update-function-code \
     --function-name  typescript-postStatusToSQS \
     --s3-bucket $BUCKET \
     --s3-key typescript-complete.zip \
     1>>lambdaupdate.log
+echo lambda 2 uploaded
+aws lambda update-function-code \
+    --function-name  typescript-postFeedToSQS \
+    --s3-bucket $BUCKET \
+    --s3-key typescript-complete.zip \
+    1>>lambdaupdate.log
+echo lambda 3 uploaded
+
 
 
 echo Lambda functions updated. See lambdaupdate.log for standard output.

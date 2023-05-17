@@ -4,7 +4,8 @@ import { putStory } from "../dao/StoryDAO";
 import { getDAOFollowers } from "../dao/FollowDAO";
 import { putFeeds } from "../dao/FeedDAO";
 import { PostStatusToSQSRequest } from "../dao/PostStatusToSQSRequest";
-import { postStatusToSQSFromSQSService } from "../dao/SQSService";
+import { postFeedToSQSFromSQSService, postStatusToSQSFromSQSService } from "../dao/SQSService";
+import { PostFeedToSQSRequest } from "../dao/PostFeedToSQSRequest";
 
 export async function postStatusToSQS(event: PostStatusRequest){
     await postStatusToSQSFromSQSService(event);
@@ -16,12 +17,13 @@ export async function postStatus(event: PostStatusToSQSRequest){
     hasMorePages = true;
     while(hasMorePages){
         [followers, hasMorePages, lastEvaluatedFollowerAlias] = await getDAOFollowers(event.alias, 10, lastEvaluatedFollowerAlias);
-        await putFeeds(event.alias, event.post, followers, event.timestamp);
+        let request = new PostFeedToSQSRequest(followers, event.alias, event.post, event.timestamp);
+        await postFeedToSQSFromSQSService(request);
     }
-
-    // let hasMorePages = true;
-    // while(hasMorePages){
-    //     let [followeeAliases, hasMorePages] = getDAOFolloweesAliases(event.status.user.alias, 10, "lastFolloweeAlias");
-    // }
     return new Response(true, event.alias + " posted " + event.post + " at " + event.timestamp);
+}
+export async function postStatusToFeed(event: PostFeedToSQSRequest){
+    await putFeeds(event.authorAlias, event.post, event.followerAliasList, event.timestamp);
+
+    return new Response(true, event.authorAlias + " posted " + event.post + " at " + event.timestamp);
 }
