@@ -9,6 +9,15 @@ const POST = 'post';
 
 export async function putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
     // trying to batchwrite zero items throws an error
+    let length = followersAliases.length;
+    let batchSize = 25;
+    console.log('put feeds in batches, starting at ' + followersAliases[0]);
+    for(let i = 0; i < length; i+=batchSize){
+        await putFeedsInBatches(authorAlias, post, followersAliases.slice(i, i+batchSize), timestamp);
+    }
+}
+export async function putFeedsInBatches(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
+    // trying to batchwrite zero items throws an error
     if(followersAliases.length == 0) return;
     const params = {
                   RequestItems: {

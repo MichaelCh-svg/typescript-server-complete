@@ -3,6 +3,7 @@ import { FakeData } from "../../util/FakeData";
 import { User } from "../domain/User";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
 import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { execSync } from "child_process";
 const TABLE_NAME = 'follow';
 const INDEX_NAME = 'follow-index';
 const PRIMARY_KEY = 'followerAlias';
@@ -132,14 +133,52 @@ export function getDAOFolloweesAliases(followerAlias: String | null, limit: numb
 
 
 //following functions not used in project, only used for data filling
-export async function createFollows(followeeAlias: string, followerAliasList: string[]){
-    const params = {
-                  RequestItems: {
-                    [TABLE_NAME]: createPutFollowRequestBatch(followeeAlias, followerAliasList)
-                  }
-                }
+export async function createFollows(followeeAlias: string, followername: string, numUsers: number){
+    // let aliasList: string[] = Array.from({length: numUsers}, (_, i) => followername + (i+1));
+    
+    let batchSize = 10;
+    // console.log(aliasList.length);
+    // console.log(aliasList.splice(2700, 100));
+    // let aliasList = createArray(followername, 0, numUsers);
+        // let list = aliasList.splice(i, batchSize);
+        // console.log('list \n' + aliasList);
+    for(let i = 0; i < numUsers; i+=batchSize){
+        let aliasList = createArray(followername, i, batchSize);
+        let list = aliasList;
+        if(i > 1300){
+            console.log('i ' + i);
+            console.log('list \n' + list);
+        }
+        // let l = list.length;
+        // console.log('number write items: ' + l)
+        await createFollowsInBatches(followeeAlias, list);
+        // execSync('sleep 0.1');
+        // console.log( (i+batchSize) + ' followers created.')
+    }
+}
+export function createArray(followerName: string, start: number, batchSize: number){
+    let aliasList = new Array<string>(batchSize);
+    for(let i = 0; i < batchSize; ++i){
+        aliasList[i] = followerName + (start+i+1);
+    }
+    return aliasList;
+}
+export async function createFollowsInBatches(followeeAlias: string, followerAliasList: string[]){
+    let length = followerAliasList.length;
+    if(length == 0){
+        console.log('zero followers to batch write');
+        return true;
+    }
+    else{
+        const params = {
+            RequestItems: {
+              [TABLE_NAME]: createPutFollowRequestBatch(followeeAlias, followerAliasList)
+            }
+          }
 
     await ddbDocClient.send(new BatchWriteCommand(params))
+    return true;
+    }
 }
 function createPutFollowRequestBatch(followeeAlias: string, followerAliasList: string[]){
     return followerAliasList.map(followerAlias => createPutFollowRequest(followerAlias, followeeAlias));

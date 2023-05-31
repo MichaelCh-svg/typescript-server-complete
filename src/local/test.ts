@@ -1,4 +1,5 @@
 import { getDAOFollowers } from "../model/dao/FollowDAO";
+import { PostStatusToSQSRequest } from "../model/dao/PostStatusToSQSRequest";
 import { FollowingRequest } from "../model/net/request/FollowingRequest";
 import { PostStatusRequest } from "../model/net/request/PostStatusRequest";
 import { getFollowers } from "../model/service/FollowService"
@@ -19,4 +20,4 @@ import { postStatus } from "../model/service/StatusService"
 // let lastFollwerAlias = "@colonel50";
 // getFollowers(new FollowingRequest("@slytherine", null, 7, lastFollwerAlias));
 // getDAOFollowers("@slytherine", 0, null);
-postStatus(new PostStatusRequest("@slytherine", "post office", null))
+postStatus(new PostStatusToSQSRequest("@slytherine", "post office", 100))

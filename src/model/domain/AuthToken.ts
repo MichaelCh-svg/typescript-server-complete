@@ -11,6 +11,19 @@ export class AuthToken {
     return new AuthToken(token, date);
   }
 
+  public static FromJson(json: string | null | undefined): AuthToken | null {
+    if (!!json) {
+      let jsonObject: { _token: string; _datetime: string } = JSON.parse(json);
+      return new AuthToken(jsonObject._token, jsonObject._datetime);
+    } else {
+      return null;
+    }
+  }
+
+  public ToJson(): string {
+    return JSON.stringify(this);
+  }
+
   public constructor(token: string, dateTime: string | null) {
     this._token = token;
     this._datetime = dateTime;

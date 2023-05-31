@@ -8,5 +8,5 @@ export const handler = async function(event: any){
         request = JSON.parse(body);
       });
 
-      return postStatus(request);;
+      return postStatus(request);
 }

@@ -72,7 +72,9 @@ export class FakeData {
     // eslint-disable-next-line no-self-compare
     if (this.fakeUsers !== this.fakeUsers) {
       // Verify that this.fakeUsers always returns the same list of users (this could be violated by mock implementations of fakeUsers)
-      throw new Error("fakeUsers should return the same list of fake users each time it's called");
+      throw new Error(
+        "fakeUsers should return the same list of fake users each time it's called"
+      );
     }
 
     if (this.fakeUsers !== this.fakeUsersUsedToGenerateStatuses) {
@@ -82,7 +84,9 @@ export class FakeData {
     // eslint-disable-next-line no-self-compare
     if (this.fakeStatuses !== this.fakeStatuses) {
       // Verify that this.fakeStatuses always returns the same list of users (this could be violated by mock implementations of fakeStatuses)
-      throw new Error("fakeStatuses should return the same list of fake statuses each time it's called");
+      throw new Error(
+        "fakeStatuses should return the same list of fake statuses each time it's called"
+      );
     }
   }
 
@@ -99,19 +103,12 @@ export class FakeData {
           j < this.fakeUsers.length - 1
             ? this.fakeUsers[j + 1]
             : this.fakeUsers[0];
-        let url = "http://byu.edu";
 
         let post = `Post ${i} ${j}
-        My friend ${mention.alias} likes this website
-        ${url}`;
+        My friend ${mention.alias} likes this website: http://byu.edu. Do you? 
+        Or do you prefer this one: http://cs.byu.edu?`;
 
-        let status = new Status(
-          post,
-          sender,
-          Date.now(),
-          [url],
-          [mention.alias]
-        );
+        let status = new Status(post, sender, Date.now());
         this.allStatuses.push(status);
       }
     }
@@ -158,7 +155,7 @@ export class FakeData {
    * @returns a tuple containing a page of users and a "hasMorePages" flag.
    */
   public getPageOfUsers(
-    lastUser: User,
+    lastUser: User | null,
     limit: number,
     omit: User | null
   ): [User[], boolean] {
@@ -167,7 +164,7 @@ export class FakeData {
     // Find the index of the first user to be returned
     if (lastUser != null) {
       for (let i = 0; i < this.fakeUsers.length; i++) {
-        if (this.fakeUsers[i].alias === lastUser.alias) {
+        if (this.fakeUsers[i].equals(lastUser)) {
           userIndex = i + 1;
           break;
         }
@@ -198,7 +195,7 @@ export class FakeData {
    * @returns a tuple containing a page of statuses and a "hasMorePages" flag.
    */
   public getPageOfStatuses(
-    lastStatus: Status,
+    lastStatus: Status | null,
     limit: number
   ): [Status[], boolean] {
     let statusIndex = 0;
@@ -207,10 +204,7 @@ export class FakeData {
     if (lastStatus != null) {
       for (let i = 0; i < this.fakeStatuses.length; i++) {
         let currentStatus = this.fakeStatuses[i];
-        if (
-          currentStatus.user.alias === lastStatus.user.alias &&
-          currentStatus.timestamp === lastStatus.timestamp
-        ) {
+        if (currentStatus.equals(lastStatus)) {
           statusIndex = i + 1;
           break;
         }

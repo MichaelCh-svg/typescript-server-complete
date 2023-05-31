@@ -28,31 +28,26 @@ source .env
 
 aws s3 cp typescript-complete.zip s3://$BUCKET
 
-echo typescript-complete.zip uploaded to the bucket. Updating lambda functions...
-
-echo '' > lambdaupdate.log
+echo -e 'typescript-complete.zip uploaded to the bucket. Updating lambda functions...\n'
 
 # Updating the s3 code doesn't update the lambdas, which make a copy of the s3 code.
 # The lambedas have to reload their code source to get the updated s3 code.
-aws lambda update-function-code \
-    --function-name  tweeter-postStatus-typescript \
-    --s3-bucket $BUCKET \
-    --s3-key typescript-complete.zip \
-    1>>lambdaupdate.log
-echo lambda 1 uploaded
-aws lambda update-function-code \
-    --function-name  typescript-postStatusToSQS \
-    --s3-bucket $BUCKET \
-    --s3-key typescript-complete.zip \
-    1>>lambdaupdate.log
-echo lambda 2 uploaded
-aws lambda update-function-code \
-    --function-name  typescript-postFeedToSQS \
-    --s3-bucket $BUCKET \
-    --s3-key typescript-complete.zip \
-    1>>lambdaupdate.log
-echo lambda 3 uploaded
+i=1
+for lambda in $LAMBDALIST
+do
+    aws lambda update-function-code \
+        --function-name  $lambda \
+        --s3-bucket $BUCKET \
+        --s3-key typescript-complete.zip \
+        1>>/dev/null \
+        &
+        # The & runs this command in the background so we can update all lambdas simultaneously 
+        # redirecting standard output to /dev/null just means that it doesn't get saved anywhere
+        # standard error should still show up in the terminal as it is represented by the number 2 instead of 1
+    echo lambda $i, $lambda, uploaded
+    ((i=i+1))
+done
 
 
-
-echo Lambda functions updated. See lambdaupdate.log for standard output.
+# using -e let's us use escape characters such as \n if the output is in quotation marks
+echo -e '\nLambda functions updated. Standard output is redirected to /dev/null and so it is not visible, but standard errors should show up in the terminal.'

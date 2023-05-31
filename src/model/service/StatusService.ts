@@ -15,11 +15,15 @@ export async function postStatus(event: PostStatusToSQSRequest){
     await putStory(event.alias, event.timestamp, event.post);
     let followers, hasMorePages, lastEvaluatedFollowerAlias = null;
     hasMorePages = true;
+    let numQueues = 0;
     while(hasMorePages){
-        [followers, hasMorePages, lastEvaluatedFollowerAlias] = await getDAOFollowers(event.alias, 10, lastEvaluatedFollowerAlias);
+        [followers, hasMorePages, lastEvaluatedFollowerAlias] = await getDAOFollowers(event.alias, 300, lastEvaluatedFollowerAlias);
         let request = new PostFeedToSQSRequest(followers, event.alias, event.post, event.timestamp);
         await postFeedToSQSFromSQSService(request);
+        ++numQueues;
+        console.log('send feeds to sqs in batches, starting at ' + followers[0]);
     }
+    console.log('should be ' + numQueues + ' queues');
     return new Response(true, event.alias + " posted " + event.post + " at " + event.timestamp);
 }
 export async function postStatusToFeed(event: PostFeedToSQSRequest){
