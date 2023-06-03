@@ -33,6 +33,7 @@ echo -e 'typescript-complete.zip uploaded to the bucket. Updating lambda functio
 # Updating the s3 code doesn't update the lambdas, which make a copy of the s3 code.
 # The lambedas have to reload their code source to get the updated s3 code.
 i=1
+PID=0
 for lambda in $LAMBDALIST
 do
     aws lambda update-function-code \
@@ -44,9 +45,12 @@ do
         # The & runs this command in the background so we can update all lambdas simultaneously 
         # redirecting standard output to /dev/null just means that it doesn't get saved anywhere
         # standard error should still show up in the terminal as it is represented by the number 2 instead of 1
-    echo lambda $i, $lambda, uploaded
+    echo lambda $i, $lambda, uploading
     ((i=i+1))
+    PID=$!
 done
+wait $PID
+echo -e '\nLast lambda function uploaded, the others have likely uploaded too but could require a couple extra seconds.'
 
 
 # using -e let's us use escape characters such as \n if the output is in quotation marks

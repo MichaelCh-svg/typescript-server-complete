@@ -7,6 +7,6 @@ export const handler = async function(event: any){
         const { body } = record;
         request = JSON.parse(body);
       });
-
-      return postStatus(request);
+      let resp = await postStatus(request);
+      return resp;
 }
