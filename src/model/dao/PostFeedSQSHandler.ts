@@ -3,20 +3,12 @@ import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
 
 export const handler = async function(event: any){
   let request = new PostFeedToSQSRequest([], 'alias2', 'post', 100);
-  let reqList: PostFeedToSQSRequest[] = new Array();
-  let resp = null;
-  event.Records.forEach((record: { body: any; }) => {
-      const { body } = record;
+  //using foreach with await and async did not work and wouldn't post all the items
+  for(let i = 0; i < event.Records.length; ++i){
+    const { body } = event.Records[i];
       request = JSON.parse(body);
-      reqList.push(request);
-    });
-  console.log('num messages ' + reqList.length)
-  let aliasList: string[] = new Array();
-  reqList.forEach(element => {
-    element.followerAliasList.forEach(el => aliasList.push(el));
-    // resp = await postStatusToFeed(element);
-  });
-  request.followerAliasList = aliasList;
-  await postStatusToFeed(request);
-  return resp;
+      // reqList.push(request);
+      await postStatusToFeed(request);
+  }
+  return null;
 }

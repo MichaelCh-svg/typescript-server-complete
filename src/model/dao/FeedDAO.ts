@@ -1,5 +1,6 @@
 import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbDocClient } from "./ClientDynamo";
+import { PutRequest } from "@aws-sdk/client-dynamodb";
 
 const TABLE_NAME = 'feed';
 const PRIMARY_KEY = 'followerAlias';
@@ -28,21 +29,26 @@ export async function putFeedsInBatches(authorAlias: string, post: string, follo
 
     let resp = await ddbDocClient.send(new BatchWriteCommand(params))
     if(resp.UnprocessedItems != undefined){
-        console.log('unprocessed items ' + Object.keys(resp.UnprocessedItems));
+        let ms = 1000;
         while(Object.keys(resp.UnprocessedItems).length > 0) {
-            console.log(resp.UnprocessedItems.data.length + ' unprocessed items');
-            const params2 = {
-                RequestItems: {
-                  [TABLE_NAME]: Object.keys(resp.UnprocessedItems)
-                }
-              }
-            resp = await ddbDocClient.send(new BatchWriteCommand(params2));
+            console.log(Object.keys(resp.UnprocessedItems.feed).length + ' unprocessed items');
+            //The ts-ignore with an @ in front must be as a comment in order to ignore an error for the next line for compiling. 
+            // @ts-ignore 
+            params.RequestItems = resp.UnprocessedItems;
+              console.log(params);
+            await sleep(ms);
+            if(ms < 10000) ms+=100;
+            resp = await ddbDocClient.send(new BatchWriteCommand(params));
+            console.log('batch wrote the unprocessed items')
             if(resp.UnprocessedItems == undefined){
                 break;
             }
         }
     }
    }
+   function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 function createPutFeedRequestBatch(post: string, authorAlias: string, followerAliases: string[], timestamp: number){
     return followerAliases.map(follower => createPutFeedRequest(post, authorAlias, follower, timestamp));
 }
