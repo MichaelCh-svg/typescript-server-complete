@@ -9,7 +9,8 @@ const INDEX_NAME = 'follow-index';
 const PRIMARY_KEY = 'followerAlias';
 const SORT_KEY = 'followeeAlias';
 
-export async function getDAOFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[string[], boolean, string | null]> {
+
+export async function getDAOFollowersAliases(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[string[], boolean, string | null]> {
     let params;
     if(lastFollowerAlias != undefined){
         params =  {
@@ -68,10 +69,7 @@ export async function getDAOFollowers(followeeAlias: string, limit: number, last
         catch (err) {
             throw err;
             };
-      return [items, hasMorePages, lastEvaluatedFollowerAlias];
-
-   
-        
+      return [items, hasMorePages, lastEvaluatedFollowerAlias];       
 }
 export function getDAOFollowees(followerAlias: String | null, limit: number, lastFolloweeAlias: String | null) : [User[], boolean] {
     // try {

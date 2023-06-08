@@ -28,7 +28,7 @@ source .env
 
 aws s3 cp typescript-complete.zip s3://$BUCKET
 
-echo -e 'typescript-complete.zip uploaded to the bucket. Updating lambda functions...\n'
+echo -e '\ntypescript-complete.zip uploaded to the bucket. Updating lambda functions...\n'
 
 # Updating the s3 code doesn't update the lambdas, which make a copy of the s3 code.
 # The lambedas have to reload their code source to get the updated s3 code.

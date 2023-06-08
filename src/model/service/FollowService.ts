@@ -1,4 +1,5 @@
-import { getDAOFollowees, getDAOFollowers } from "../dao/FollowDAO";
+import { getDAOFollowees, getDAOFollowersAliases } from "../dao/FollowDAO";
+import { getUsersFromAliases } from "../dao/UserDAO";
 import { FollowingRequest } from "../net/request/FollowingRequest";
 import { FollowingResponse } from "../net/response/FollowingResponse";
 
@@ -19,8 +20,9 @@ export async function getFollowers(event: FollowingRequest){
     } else if(event.limit <= 0) {
         throw new Error("[Bad Request] Request needs to have a positive limit");
     }
-    let [followers, hasMorePages] = await getDAOFollowers(event.followerAlias, event.limit, event.lastFolloweeAlias);
+    let [followers, hasMorePages] = await getDAOFollowersAliases(event.followerAlias, event.limit, event.lastFolloweeAlias);
     console.log('numFollowers ' + followers.length);
     console.log('hasMorePages ' + hasMorePages);
-    // return new FollowingResponse(true, followers, hasMorePages) ;
+    let users = await getUsersFromAliases(followers);
+    return new FollowingResponse(true, users, hasMorePages) ;
 }
