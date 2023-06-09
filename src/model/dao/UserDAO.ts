@@ -68,6 +68,18 @@ export async function getUser (username: string) : Promise<User>{
     }
     else throw new Error('user not found for user with alias ' + username);
 })}
+export async function isUser (username: string) : Promise<boolean>{
+  const params = {
+      TableName: TABLE_NAME,
+      Key: {
+          [PRIMARY_KEY]:  username,
+      },
+      ProjectionExpression: PRIMARY_KEY
+  };
+  return await ddbDocClient.send(new GetCommand(params)).then(data => {
+    let userData = data.Item;
+    return userData !== undefined;
+})}
 export async function getUserFollowersCount (username: string) {
   const params = {
       TableName: TABLE_NAME,
@@ -102,7 +114,9 @@ export async function putUser(firstName: string, lastName: string, alias: string
         [FIRST_NAME]: firstName, // e.g. year: "2013"
         [LAST_NAME]: lastName,
         [PASSWORD]: password,
-        [IMAGE_URL]: imageUrl
+        [IMAGE_URL]: imageUrl,
+        [FOLLOWERS_COUNT]: 0,
+        [FOLLOWING_COUNT]: 0
       },
     };
     try {

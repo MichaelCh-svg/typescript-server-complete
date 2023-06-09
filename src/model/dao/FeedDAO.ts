@@ -1,12 +1,68 @@
-import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
-import { ddbDocClient } from "./ClientDynamo";
-import { PutRequest } from "@aws-sdk/client-dynamodb";
+import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { ddbClient, ddbDocClient } from "./ClientDynamo";
+import { Status } from "../domain/Status";
+import { User } from "../domain/User";
 
 const TABLE_NAME = 'feed';
 const PRIMARY_KEY = 'followerAlias';
 const SORT_KEY = 'timestamp';
 const AUTHOR_ALIAS = 'authorAlias';
 const POST = 'post';
+
+export async function getFeedStatusListWithoutUsers(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean, Status | null]> {
+    let params;
+    if(lastStatus != undefined){
+        params =  {
+            KeyConditionExpression: PRIMARY_KEY + " = :s",
+            // FilterExpression: "contains (Subtitle, :topic)",
+            ExpressionAttributeValues: {
+              ":s": { S:  alias}
+            },
+            TableName: TABLE_NAME,
+            Limit: limit,
+            ExclusiveStartKey: {
+                [PRIMARY_KEY]: { S: lastStatus.user.alias},
+                [SORT_KEY]: { N: lastStatus.timestamp}
+            }
+    
+          };
+    }
+    else{
+        params =  {
+          KeyConditionExpression: [PRIMARY_KEY] + " = :s",
+          ExpressionAttributeValues: {
+            ":s": alias
+          },
+          TableName: TABLE_NAME,
+          Limit: 10, 
+        };
+        
+    }
+      console.log(JSON.stringify(params));
+      let items : Status[] = [];
+      let hasMorePages = true;
+      let lastEvaluatedStatus = null;
+      let data;
+        try {
+            
+            data = await ddbClient.send(new QueryCommand(params)).then(data => {
+                
+                if(data.Items != undefined){
+                    data.Items.forEach(s => {
+                      items.push(new Status(s[POST], new User('undefined', 'undefined', s[AUTHOR_ALIAS], 'undefined'), s[SORT_KEY]))});
+                }
+                if(items.length == 0) hasMorePages = false;
+                if(data.LastEvaluatedKey != undefined){
+                    lastEvaluatedStatus =  items.findLast;
+                }
+                else hasMorePages = false;
+            });
+        }
+        catch (err) {
+            throw err;
+            };
+      return [items, hasMorePages, lastEvaluatedStatus];
+          }
 
 export async function putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
     // trying to batchwrite zero items throws an error

@@ -1,5 +1,5 @@
 import { FakeData } from "../../util/FakeData";
-import { getUser, putUser } from "../dao/UserDAO";
+import { getUser, isUser, putUser } from "../dao/UserDAO";
 import { setS3Image } from "../dao/s3DAO";
 import { AuthToken } from "../domain/AuthToken";
 import { User } from "../domain/User";
@@ -42,8 +42,8 @@ export async function register(event: RegisterRequest){
         throw new Error("[Bad Request] Missing a password");
     }
     try{
-        let user = await getUser(event.alias);
-        if(user != undefined) throw Error("User " + event.alias + " already exists.");
+        let userExists = await isUser(event.alias);
+        if(userExists) throw Error("User " + event.alias + " already exists.");
         let imageUrl = await setS3Image(event.imageUrl, event.alias);
         const hashedPassword = SHA256(event.password).toString();
         await putUser(event.firstName, event.lastName, event.alias, hashedPassword, imageUrl);

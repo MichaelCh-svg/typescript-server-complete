@@ -2,16 +2,31 @@ import { PostStatusRequest } from "../net/request/PostStatusRequest";
 import { Response } from "../net/response/Response";
 import { getStatusList, putStory } from "../dao/StoryDAO";
 import { getDAOFollowersAliases } from "../dao/FollowDAO";
-import { putFeeds } from "../dao/FeedDAO";
+import { getFeedStatusListWithoutUsers, putFeeds } from "../dao/FeedDAO";
 import { PostStatusToSQSRequest } from "../dao/PostStatusToSQSRequest";
 import { postFeedToSQSFromSQSService, postStatusToSQSFromSQSService } from "../dao/SQSService";
 import { PostFeedToSQSRequest } from "../dao/PostFeedToSQSRequest";
-import { StoryRequest } from "../net/request/StoryRequest";
+import { StatusListRequest } from "../net/request/StatusListRequest";
 import { StoryFeedResponse } from "../net/response/StoryFeedResponse";
+import { getUsersFromAliases } from "../dao/UserDAO";
 
-export async function getStory(event: StoryRequest){
-    let [statusList, hasMorePages, lastEvaluatedStatusAlias] = await getStatusList(event);
-    return new StoryFeedResponse(true, statusList, hasMorePages);
+export async function getFeed(event: StatusListRequest){
+    console.log('getFeed statusListRequest authorUser\n' + JSON.stringify(event.authorUser));
+    console.log('getFeed statusListRequest authorUser alias: ' + event.authorUser.alias);
+    let [statusList, hasMorePages, lastEvaluatedStatus] = await getFeedStatusListWithoutUsers(event.authorUser.alias, event.lastStatus, event.limit);
+    let aliasList = statusList.map(s => s.user.alias);
+    let aliastListNoDuplicates = [...new Set(aliasList)];
+    let userList = await getUsersFromAliases(aliastListNoDuplicates);
+    statusList.forEach(s => { 
+        let user = userList.find(u => u.alias = s.user.alias);
+        if(user !== undefined) s.user = user;
+        else throw new Error('status could not find user with alias ' + s.user.alias)})
+    return new StoryFeedResponse(true, statusList, hasMorePages, lastEvaluatedStatus);
+}
+
+export async function getStory(event: StatusListRequest){
+    let [statusList, hasMorePages, lastEvaluatedStatus] = await getStatusList(event);
+    return new StoryFeedResponse(true, statusList, hasMorePages, lastEvaluatedStatus);
 }
 
 export async function postStatusToSQS(event: PostStatusRequest){
