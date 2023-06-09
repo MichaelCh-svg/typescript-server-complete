@@ -1,23 +1,13 @@
-import { getDAOFollowers } from "../model/dao/FollowDAO";
+
 import { PostStatusToSQSRequest } from "../model/dao/PostStatusToSQSRequest";
-import { FollowingRequest } from "../model/net/request/FollowingRequest";
-import { PostStatusRequest } from "../model/net/request/PostStatusRequest";
-import { getFollowers } from "../model/service/FollowService"
-import { postStatus } from "../model/service/StatusService"
-// The test.ts file is in the .gitignore file. If you want this file to upload to github, remove it from the .gitignore file.
+import { getUserFollowersCount, incrementFollowersCount } from "../model/dao/UserDAO";
+import { FollowUnfollowRequest } from "../model/net/request/FollowUnfollowRequest"
+import { unfollow } from "../model/service/FollowService"
 
-// putFeeds("@sylvia", "7nth eleventh",["sarah", "john", "colonel"], 123456789);
-// Buffer.from("string", 'base64');
-// const encode = (str: string):string => Buffer.from(str, 'binary').toString('base64');
-// let s = encode("string");
+/**
+ * although async and await is not supported here, you are able to circumvent this using .then statements.
+ */
+let testAlias = "@colonel1";
+let l = new FollowUnfollowRequest(testAlias, testAlias, null);
 
-// import { RegisterRequest } from "../model/net/request/RegisterRequest";
-// import { register } from "../model/service/UserService";
-
-// // console.log(s);
-// let r = new RegisterRequest("f", "l", "@nightingale13", "p", s);
-// register(r);
-// let lastFollwerAlias = "@colonel50";
-// getFollowers(new FollowingRequest("@slytherine", null, 7, lastFollwerAlias));
-// getDAOFollowers("@slytherine", 0, null);
-postStatus(new PostStatusToSQSRequest("@slytherine", "post office", 100))
+getUserFollowersCount(testAlias).then(c => console.log('c ' + c));

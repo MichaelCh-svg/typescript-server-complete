@@ -19,6 +19,11 @@ cp .env build
 # move into the build folder so that the contents are zipped with one less parent folder at the top.
 cd build
 
+# the local folder, hence its name, is only for local purposes and so is removed from the deployment zipped package
+# it is not excluded from compilation in the ts.confiig file, because doing so removes autocomplete for function imports, thereby
+# slowing down the creation of local
+rm -r local
+
 # # zip the contents using 7-zip. 7-zip will have to be installed and added to the windows environment system path variable.
 7z a -tzip typescript-complete.zip -r
 

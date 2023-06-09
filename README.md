@@ -21,6 +21,6 @@ To set up this project with aws, after cloning the project:
 
 
 For local testing, run a .ts file using ts-node '[file].ts'.
-Everything in the 'local' folder is excluded from the typescript build compile. The exclude parameters are set in the tsconfig.json file.
+Everything in the 'local' folder is deleted from the compiled files before being uploaded to the lambdas.
 
 To save costs, we disable sqs lambda triggers when we don't use them. To accomodate this, I created the open.sh and close.sh files, which enable and disable these triggers.

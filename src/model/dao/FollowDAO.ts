@@ -2,7 +2,7 @@ import { QueryCommand } from "@aws-sdk/client-dynamodb";
 import { FakeData } from "../../util/FakeData";
 import { User } from "../domain/User";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
-import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { BatchWriteCommand, DeleteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { execSync } from "child_process";
 const TABLE_NAME = 'follow';
 const INDEX_NAME = 'follow-index';
@@ -10,6 +10,36 @@ const PRIMARY_KEY = 'followerAlias';
 const SORT_KEY = 'followeeAlias';
 
 
+export async function deleteFollow(alias: string, aliasToFollow: string) {
+    // Set the parameters.
+    const params = {
+      TableName: TABLE_NAME,
+      Key: {
+        [PRIMARY_KEY]: alias, //e.g. title: "Rush"
+        [SORT_KEY]: aliasToFollow, // e.g. year: "2013"
+      },
+    };
+    try {
+      await ddbDocClient.send(new DeleteCommand(params));
+    } catch (err) {
+      throw err;
+    }
+  };
+export async function putFollow(alias: string, aliasToFollow: string) {
+    // Set the parameters.
+    const params = {
+      TableName: TABLE_NAME,
+      Item: {
+        [PRIMARY_KEY]: alias, //e.g. title: "Rush"
+        [SORT_KEY]: aliasToFollow, // e.g. year: "2013"
+      },
+    };
+    try {
+      await ddbDocClient.send(new PutCommand(params));
+    } catch (err) {
+      throw err;
+    }
+  };
 export async function getDAOFollowersAliases(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[string[], boolean, string | null]> {
     let params;
     if(lastFollowerAlias != undefined){

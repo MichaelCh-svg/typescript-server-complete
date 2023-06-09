@@ -3,12 +3,23 @@ import { getUser, putUser } from "../dao/UserDAO";
 import { setS3Image } from "../dao/s3DAO";
 import { AuthToken } from "../domain/AuthToken";
 import { User } from "../domain/User";
+import { GetUserRequest } from "../net/request/GetUserRequest";
 import { LoginRequest } from "../net/request/LoginRequest";
 import { RegisterRequest } from "../net/request/RegisterRequest";
+import { GetUserResponse } from "../net/response/GetUserResponse";
 import { LoginResponse } from "../net/response/LoginResponse";
 import { SHA256 } from 'crypto-js';
 
 
+export async function getUserFromService(event: GetUserRequest){
+    try{
+        let user = await getUser(event.alias);
+        return new GetUserResponse(true, user);
+    }
+    catch(err){
+        throw new Error("[Bad Request] " + (err as Error).message);
+    }
+}
 export async function login(event: LoginRequest){
     if(event._alias == null){
         throw new Error("[Bad Request] Missing a username");
@@ -17,12 +28,8 @@ export async function login(event: LoginRequest){
     }
     let user = null;
     try{
-        let userData = await getUser(event._alias);
-        if(userData != undefined){
-            user = new User(userData.firstName, userData.lastName, userData.alias, userData.imageUrl);
-            return new LoginResponse(true, user, AuthToken.Generate())
-        }
-        else throw Error("There is no user with username " + event._alias)
+        let user = await getUser(event._alias);
+        return new LoginResponse(true, user, AuthToken.Generate())
     }
     catch(err){
         throw new Error("[Bad Request] " + (err as Error).message);
