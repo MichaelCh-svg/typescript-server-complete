@@ -1,5 +1,4 @@
 import { User } from "../../domain/User"
-import { AuthToken } from "../../domain/AuthToken"
 import { Response } from "./Response"
 export class GetUserResponse extends Response{
 

@@ -38,7 +38,14 @@ export async function getFollowees(event: FollowingRequest){
     }
     let [followers, hasMorePages] = await getDAOFolloweesAliases(event.followerAlias, event.limit, event.lastFolloweeAlias);
     let users = await getUsersFromAliases(followers);
-    return new FollowingResponse(true, users, hasMorePages);
+    //The users have to be in the same order that the followerAliaslist was in, otherwise the pagination for getFollowerAlias
+    // list gets messed up, since the wrong exclusive start key is used, and so some items are returned in multiple pages.
+    let sortedUsers = followers.map(f => {
+        let user = users.find(u => u.alias == f);
+        if(user === undefined) throw new Error("Get Followees: could not find user with alias " + f);
+        else return user;
+    });
+    return new FollowingResponse(true, sortedUsers, hasMorePages);
 }
 export async function getFollowers(event: FollowingRequest){
     
@@ -48,6 +55,15 @@ export async function getFollowers(event: FollowingRequest){
         throw new Error("[Bad Request] Request needs to have a positive limit");
     }
     let [followers, hasMorePages] = await getDAOFollowersAliases(event.followerAlias, event.limit, event.lastFolloweeAlias);
+    console.log(followers.length + " followers\n" + JSON.stringify(followers));
     let users = await getUsersFromAliases(followers);
-    return new FollowingResponse(true, users, hasMorePages) ;
+
+    //The users have to be in the same order that the followerAliaslist was in, otherwise the pagination for getFollowerAlias
+    // list gets messed up, since the wrong exclusive start key is used, and so some items are returned in multiple pages.
+    let sortedUsers = followers.map(f => {
+        let user = users.find(u => u.alias == f);
+        if(user === undefined) throw new Error("Get Followers: could not find user with alias " + f);
+        else return user;
+    });
+    return new FollowingResponse(true, sortedUsers, hasMorePages) ;
 }

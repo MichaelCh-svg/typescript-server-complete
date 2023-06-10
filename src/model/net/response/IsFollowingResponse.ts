@@ -4,10 +4,10 @@ import { Response } from "./Response"
 
 export class IsFollowingResponse extends Response{
 
-    isFollowing: boolean
+    follows: boolean
     
-    constructor(success: boolean, isFollowing: boolean, message: String | null = null){
+    constructor(success: boolean, follows: boolean, message: String | null = null){
         super(success, message);
-        this.isFollowing = isFollowing;
+        this.follows = follows;
     }
 }

@@ -65,11 +65,12 @@ export async function getDAOFollowersAliases(followeeAlias: string, limit: numbe
             IndexName: INDEX_NAME,
             Limit: limit,
             ExclusiveStartKey: {
-                [PRIMARY_KEY]: { S: lastFollowerAlias},
-                [SORT_KEY]: { S: followeeAlias}
+              [SORT_KEY]: { S: followeeAlias},
+              [PRIMARY_KEY]: { S: lastFollowerAlias}
             }
     
           };
+          console.log("get followers params other page\n" + JSON.stringify(params));
     }
     else{
         params =  {
@@ -83,6 +84,7 @@ export async function getDAOFollowersAliases(followeeAlias: string, limit: numbe
             IndexName: INDEX_NAME,
             Limit: limit, 
           };
+          console.log("get followers params first page\n" + JSON.stringify(params));
     }
     
       let items : string[] = [];
@@ -99,9 +101,7 @@ export async function getDAOFollowersAliases(followeeAlias: string, limit: numbe
                
                 
                 if(data.Items != undefined){
-                    // unfortunately, I can't use s.PRIMARY_KEY.S, because I can't use variables here.
-                    // Instead we have to hardcode the value.
-                    data.Items.forEach(s => {if (s.followerAlias.S != undefined) items.push(s.followerAlias.S)});
+                    data.Items.forEach(s => {if (s[PRIMARY_KEY].S != undefined) items.push(s[PRIMARY_KEY].S)});
                     // data.Items.forEach(s => console.log(s.followerAlias.S))
                 }
                 if(items.length == 0) hasMorePages = false;
@@ -125,11 +125,10 @@ export async function getDAOFolloweesAliases(followerAlias: string, limit: numbe
           },
           ProjectionExpression: SORT_KEY,
           TableName: TABLE_NAME,
-          IndexName: INDEX_NAME,
           Limit: limit,
           ExclusiveStartKey: {
-              [PRIMARY_KEY]: { S: lastFolloweeAlias},
-              [SORT_KEY]: { S: followerAlias}
+              [PRIMARY_KEY]: { S: followerAlias},
+              [SORT_KEY]: { S: lastFolloweeAlias}
           }
   
         };
@@ -161,9 +160,7 @@ export async function getDAOFolloweesAliases(followerAlias: string, limit: numbe
              
               
               if(data.Items != undefined){
-                  // unfortunately, I can't use s.PRIMARY_KEY.S, because I can't use variables here.
-                  // Instead we have to hardcode the value.
-                  data.Items.forEach(s => {if (s.followerAlias.S != undefined) items.push(s.followerAlias.S)});
+                  data.Items.forEach(s => {if (s[SORT_KEY].S != undefined) items.push(s[SORT_KEY].S)});
                   // data.Items.forEach(s => console.log(s.followerAlias.S))
               }
               if(items.length == 0) hasMorePages = false;

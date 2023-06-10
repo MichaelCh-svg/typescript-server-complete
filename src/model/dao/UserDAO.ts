@@ -132,6 +132,7 @@ export async function putUser(firstName: string, lastName: string, alias: string
     return item;
   }
   export async function getUsersFromAliases(aliases: string[]): Promise<User[]> {
+    if(aliases.length == 0) return [];
     let keys = [];
     for(let i = 0; i < aliases.length; ++i){
       keys.push(createGetUserRequest(aliases[i]));

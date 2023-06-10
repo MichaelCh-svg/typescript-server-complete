@@ -47,7 +47,7 @@ export async function getStatusList(request: StatusListRequest): Promise<[Status
           data = await ddbClient.send(new QueryCommand(params)).then(data => {
               
              
-              if(data.Items != undefined){
+              if(data.Items != undefined && data.Items.length > 0){
                   data.Items.forEach(s => {
                     items.push(new Status(s[POST], request.authorUser, s[SORT_KEY]))});
                   // data.Items.forEach(s => console.log(s.followerAlias.S))

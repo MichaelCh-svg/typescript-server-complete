@@ -47,7 +47,7 @@ export async function getFeedStatusListWithoutUsers(alias: string, lastStatus: S
             
             data = await ddbClient.send(new QueryCommand(params)).then(data => {
                 
-                if(data.Items != undefined){
+                if(data.Items != undefined && data.Items.length > 0){
                     data.Items.forEach(s => {
                       items.push(new Status(s[POST], new User('undefined', 'undefined', s[AUTHOR_ALIAS], 'undefined'), s[SORT_KEY]))});
                 }
