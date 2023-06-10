@@ -1,4 +1,5 @@
-import { Status } from "../../domain/Status";
+
+import { Status } from "../../../domain/Status";
 import { PagedResponse } from "./PagedResponse";
 
 export class StoryFeedResponse extends PagedResponse{

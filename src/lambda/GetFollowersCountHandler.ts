@@ -1,7 +1,8 @@
-import { FollowerFollowingCountRequest } from "../model/net/request/FollowerFollowingCountRequest";
-import { getFollowersCount } from "../model/service/FollowService";
+import { getFollowService } from "./factory/factory";
+import { FollowerFollowingCountRequest } from "../model/dao/net/request/FollowerFollowingCountRequest";
+
 
 export const handler = async(event: FollowerFollowingCountRequest) => {
     // TODO implement
-    return getFollowersCount(event);
+    return getFollowService().getFollowersCount(event);
 };

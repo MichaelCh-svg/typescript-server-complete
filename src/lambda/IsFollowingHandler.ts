@@ -1,7 +1,8 @@
-import { IsFollowRequest } from "../model/net/request/IsFollowRequest";
-import { isFollowingFromService } from "../model/service/FollowService";
+import { IsFollowRequest } from "../model/dao/net/request/IsFollowRequest";
+import { getFollowService } from "./factory/factory";
+
 
 export const handler = async(event: IsFollowRequest) => {
     // TODO implement
-    return isFollowingFromService(event);
+    return getFollowService().isFollowingFromService(event);
 };

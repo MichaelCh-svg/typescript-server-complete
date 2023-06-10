@@ -1,6 +1,7 @@
-import { AuthToken } from "../../domain/AuthToken";
-import { Status } from "../../domain/Status";
-import { User } from "../../domain/User";
+
+import { AuthToken } from "../../../domain/AuthToken";
+import { Status } from "../../../domain/Status";
+import { User } from "../../../domain/User";
 import { AuthorizedRequest } from "./AuthorizedRequest";
 
 export class StatusListRequest extends AuthorizedRequest{

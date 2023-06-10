@@ -1,8 +1,9 @@
-import { PostStatusRequest } from "../model/net/request/PostStatusRequest";
-import { postStatusToSQS } from "../model/service/StatusService";
+import { PostStatusRequest } from "../model/dao/net/request/PostStatusRequest";
+import { getStatusService } from "./factory/factory";
+
 
 
 export const handler = async(event: PostStatusRequest) => {
     // TODO implement
-    return postStatusToSQS(event);
+    return getStatusService().postStatusToSQS(event);
 };

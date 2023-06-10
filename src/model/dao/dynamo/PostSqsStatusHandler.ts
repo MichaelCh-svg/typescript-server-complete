@@ -1,4 +1,5 @@
-import { postStatus } from "../service/StatusService";
+
+import { getStatusService } from "../../../lambda/factory/factory";
 import { PostStatusToSQSRequest } from "./PostStatusToSQSRequest";
 
 export const handler = async function(event: any){
@@ -7,6 +8,6 @@ export const handler = async function(event: any){
         const { body } = record;
         request = JSON.parse(body);
       });
-      let resp = await postStatus(request);
+      let resp = await getStatusService().postStatus(request);
       return resp;
 }

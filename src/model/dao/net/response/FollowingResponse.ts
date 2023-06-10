@@ -1,4 +1,5 @@
-import { User } from "../../domain/User";
+
+import { User } from "../../../domain/User";
 import { PagedResponse } from "./PagedResponse";
 
 export class FollowingResponse extends PagedResponse{

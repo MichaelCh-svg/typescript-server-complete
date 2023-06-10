@@ -1,7 +1,8 @@
-import { StatusListRequest } from "../model/net/request/StatusListRequest";
-import { getStory } from "../model/service/StatusService";
+import { StatusListRequest } from "../model/dao/net/request/StatusListRequest";
+import { getStatusService } from "./factory/factory";
+
 
 export const handler = async(event: StatusListRequest) => {
     // TODO implement
-    return getStory(event);
+    return getStatusService().getStory(event);
 };

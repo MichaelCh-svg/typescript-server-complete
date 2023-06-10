@@ -1,4 +1,5 @@
-import { User } from "../../domain/User"
+
+import { User } from "../../../domain/User";
 import { Response } from "./Response"
 export class GetUserResponse extends Response{
 

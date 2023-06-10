@@ -1,5 +1,6 @@
-import { User } from "../../domain/User"
-import { AuthToken } from "../../domain/AuthToken"
+
+import { AuthToken } from "../../../domain/AuthToken";
+import { User } from "../../../domain/User";
 import { Response } from "./Response"
 export class LoginResponse extends Response{
 

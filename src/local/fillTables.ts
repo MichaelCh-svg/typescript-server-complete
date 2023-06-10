@@ -1,6 +1,4 @@
 import { execSync } from "child_process";
-import { createFollows } from "../model/dao/FollowDAO";
-import { createUsers } from "../model/dao/UserDAO";
 
 let mainUserName = "@calvin";
 let followername = "@colonel";

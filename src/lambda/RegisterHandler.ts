@@ -1,8 +1,8 @@
-import { RegisterRequest } from "../model/net/request/RegisterRequest";
-import { register } from "../model/service/UserService"
+import { RegisterRequest } from "../model/dao/net/request/RegisterRequest";
+import { getUserService } from "./factory/factory";
 
 
 export const handler = async(event: RegisterRequest) => {
     // TODO implement
-    return register(event);
+    return getUserService().register(event);
 };

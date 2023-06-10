@@ -1,4 +1,5 @@
-import { AuthToken } from "../../domain/AuthToken";
+
+import { AuthToken } from "../../../domain/AuthToken";
 import { AuthorizedRequest } from "./AuthorizedRequest";
 
 export class IsFollowRequest extends AuthorizedRequest{

@@ -1,8 +1,9 @@
-import { LoginRequest } from "../model/net/request/LoginRequest";
-import { login } from "../model/service/UserService"
+import { LoginRequest } from "../model/dao/net/request/LoginRequest";
+import { getUserService } from "./factory/factory";
+
 
 
 export const handler = async(event: LoginRequest) => {
     // TODO implement
-    return login(event);
+    return getUserService().loginFromService(event);
 };

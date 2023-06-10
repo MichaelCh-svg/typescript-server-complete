@@ -1,4 +1,4 @@
-import { postStatusToFeed } from "../service/StatusService";
+import { getStatusService } from "../../../lambda/factory/factory";
 import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
 
 export const handler = async function(event: any){
@@ -8,7 +8,7 @@ export const handler = async function(event: any){
     const { body } = event.Records[i];
       request = JSON.parse(body);
       // reqList.push(request);
-      await postStatusToFeed(request);
+      await getStatusService().postStatusToFeed(request);
   }
   return null;
 }

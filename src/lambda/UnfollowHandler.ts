@@ -1,7 +1,8 @@
-import { FollowUnfollowRequest } from "../model/net/request/FollowUnfollowRequest";
-import { unfollow } from "../model/service/FollowService";
+import { FollowUnfollowRequest } from "../model/dao/net/request/FollowUnfollowRequest";
+import { getFollowService } from "./factory/factory";
+
 
 export const handler = async(event: FollowUnfollowRequest) => {
     // TODO implement
-    return unfollow(event);
+    return getFollowService().unfollow(event);
 };
