@@ -4,7 +4,7 @@ import { Status } from "../../domain/Status";
 import { User } from "../../domain/User";
 import { IFeedDao } from "../IDaoFactory";
 
-export class FeedDao implements IFeedDao{
+export class FeedDao {
     private TABLE_NAME = 'feed';
     private PRIMARY_KEY = 'followerAlias';
     private SORT_KEY = 'timestamp';

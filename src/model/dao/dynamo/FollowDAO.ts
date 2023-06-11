@@ -1,14 +1,13 @@
 import { QueryCommand } from "@aws-sdk/client-dynamodb";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
 import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { IFollowDao } from "../IDaoFactory";
 
 const TABLE_NAME = 'follow';
 const INDEX_NAME = 'follow-index';
 const PRIMARY_KEY = 'followerAlias';
 const SORT_KEY = 'followeeAlias';
 
-export class FollowDao implements IFollowDao{
+export class FollowDao{
   async isFollowing (followerAlias: string, followeeAlias: string) {
     const params = {
         TableName: TABLE_NAME,

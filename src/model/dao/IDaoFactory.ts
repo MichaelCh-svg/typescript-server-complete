@@ -9,14 +9,18 @@ export interface IDaoFactory{
     getStoryDao(): IStoryDao;
 }
 export interface IUserDao{
+    //login, verify password,
+    login(username: string, hashedPassword: string): Promise<User>;
     getUser(username: string): Promise<User>;
-    isUser(username: string): Promise<boolean>;
-    putUser(user: User, password: string): Promise<boolean>;
+    //not needed
+    // isUser(username: string): Promise<boolean>;
+    // return user with image url, set s3 image,
+    putUser(user: User, password: string): Promise<User>;
     decrementFollowersCount(username: string): Promise<boolean>;
     decrementFollowingCount(username: string): Promise<boolean>;
     incrementFollowersCount(username: string): Promise<boolean>;
     incrementFollowingCount(username: string): Promise<boolean>;
-    getUsersFromAliases(aliasList: string[]): Promise<User[]>;
+    // getUsersFromAliases(aliasList: string[]): Promise<User[]>;
     getUserFollowingCount(username: string): Promise<number>;
     getUserFollowersCount(username: string): Promise<number>;
 }
@@ -24,12 +28,13 @@ export interface IFollowDao{
     isFollowing (followerAlias: string, followeeAlias: string): Promise<boolean>;
     deleteFollow(alias: string, aliasToFollow: string): Promise<void>;
     putFollow(alias: string, aliasToFollow: string): Promise<void>;
-    getDAOFollowersAliases(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[string[], boolean, string | null]>;
-    getDAOFolloweesAliases(followerAlias: string, limit: number, lastFolloweeAlias: string | null): Promise<[string[], boolean, string | null]>;
+    getDAOFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[User[], boolean]>;
+    getDAOFollowees(followerAlias: string, limit: number, lastFolloweeAlias: string | null): Promise<[User[], boolean]>;
 }
 export interface IFeedDao{
-    getFeedStatusListWithoutUsers(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean, Status | null]>;
-    putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number): Promise<boolean>;
+    //change to get feeds, 
+    getFeedList(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean, Status | null]>;
+    putFeeds(authorAlias: string, post: string, timestamp: number): Promise<void>;
 }
 export interface IStoryDao{
     getStatusList(request: StatusListRequest): Promise<[Status[], boolean, Status | null]>;

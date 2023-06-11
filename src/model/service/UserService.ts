@@ -1,7 +1,4 @@
-import { FakeData } from "../../util/FakeData";
 import { IDaoFactory, IUserDao } from "../dao/IDaoFactory";
-import { UserDAO } from "../dao/dynamo/UserDAO";
-import { setS3Image } from "../dao/dynamo/s3DAO";
 import { GetUserRequest } from "../dao/net/request/GetUserRequest";
 import { LoginRequest } from "../dao/net/request/LoginRequest";
 import { RegisterRequest } from "../dao/net/request/RegisterRequest";
@@ -33,7 +30,7 @@ export class UserService{
         }
         let user = null;
         try{
-            let user = await this.userDao.getUser(event._alias);
+            let user = await this.userDao.login(event._alias, event.password);
             return new LoginResponse(true, user, AuthToken.Generate())
         }
         catch(err){
@@ -47,12 +44,8 @@ export class UserService{
             throw new Error("[Bad Request] Missing a password");
         }
         try{
-            let userExists = await this.userDao.isUser(event.alias);
-            if(userExists) throw Error("User " + event.alias + " already exists.");
-            let imageUrl = await setS3Image(event.imageUrl, event.alias);
             const hashedPassword = SHA256(event.password).toString();
-            let user = new User(event.firstName, event.lastName, event.alias, imageUrl);
-            await this.userDao.putUser(user, hashedPassword);
+            let user = await this.userDao.putUser(new User(event.firstName, event.lastName, event.alias, event.imageUrl), hashedPassword);
             return new LoginResponse(true, user, AuthToken.Generate());
         }
         catch(err){

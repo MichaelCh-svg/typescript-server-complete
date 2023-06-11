@@ -25,14 +25,7 @@ export class StatusService{
         //since serializaing and deserializing an object disables the 'get' function for the alias, the alias cannot be retrieved from the lambda event.
         let targetUser = User.FromJson(JSON.stringify(event.authorUser));
         if(targetUser == null) throw new Error('get Feed user json could not be converted to user object\nuser: ' + JSON.stringify(event.authorUser));
-        let [statusList, hasMorePages, lastEvaluatedStatus] = await this.feedDao.getFeedStatusListWithoutUsers(targetUser.alias, event.lastStatus, event.limit);
-        let aliasList = statusList.map(s => s.user.alias);
-        let aliastListNoDuplicates = [...new Set(aliasList)];
-        let userList = await this.userDao.getUsersFromAliases(aliastListNoDuplicates);
-        statusList.forEach(s => { 
-            let user = userList.find(u => u.alias == s.user.alias);
-            if(user !== undefined) s.user = user;
-            else throw new Error('status could not find user with alias ' + s.user.alias)})
+        let [statusList, hasMorePages, lastEvaluatedStatus] = await this.feedDao.getFeedList(targetUser.alias, event.lastStatus, event.limit);
         return new StoryFeedResponse(true, statusList, hasMorePages, lastEvaluatedStatus);
     }
     
@@ -57,21 +50,13 @@ export class StatusService{
     }
     async postStatus(event: PostStatusToSQSRequest){
         await this.storyDao.putStory(event.alias, event.timestamp, event.post);
-        let followers, hasMorePages, lastEvaluatedFollowerAlias = null;
-        hasMorePages = true;
-        let numQueues = 0;
-        while(hasMorePages){
-            [followers, hasMorePages, lastEvaluatedFollowerAlias] = await this.followDao.getDAOFollowersAliases(event.alias, 300, lastEvaluatedFollowerAlias);
-            let request = new PostFeedToSQSRequest(followers, event.alias, event.post, event.timestamp);
-            let data = await postFeedToSQSFromSQSService(request);
-            ++numQueues;
-        }
+        await this.feedDao.putFeeds(event.alias, event.post, event.timestamp);
     
         return new Response(true, event.alias + " posted " + event.post + " at " + event.timestamp);
     }
-    async postStatusToFeed(event: PostFeedToSQSRequest){
-        await this.feedDao.putFeeds(event.authorAlias, event.post, event.followerAliasList, event.timestamp);
+    // async postStatusToFeed(event: PostFeedToSQSRequest){
+    //     await this.feedDao.putFeeds(event.authorAlias, event.post, event.followerAliasList, event.timestamp);
     
-        return new Response(true, event.authorAlias + " posted " + event.post + " at " + event.timestamp);
-    }
+    //     return new Response(true, event.authorAlias + " posted " + event.post + " at " + event.timestamp);
+    // }
 }

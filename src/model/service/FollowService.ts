@@ -42,16 +42,8 @@ export class FollowService{
         } else if(event.limit <= 0) {
             throw new Error("[Bad Request] Request needs to have a positive limit");
         }
-        let [followers, hasMorePages] = await this.followDao.getDAOFolloweesAliases(event.followerAlias, event.limit, event.lastFolloweeAlias);
-        let users = await this.userDao.getUsersFromAliases(followers);
-        //The users have to be in the same order that the followerAliaslist was in, otherwise the pagination for getFollowerAlias
-        // list gets messed up, since the wrong exclusive start key is used, and so some items are returned in multiple pages.
-        let sortedUsers = followers.map(f => {
-            let user = users.find(u => u.alias == f);
-            if(user === undefined) throw new Error("Get Followees: could not find user with alias " + f);
-            else return user;
-        });
-        return new FollowingResponse(true, sortedUsers, hasMorePages);
+        let [users, hasMorePages] = await this.followDao.getDAOFollowees(event.followerAlias, event.limit, event.lastFolloweeAlias);
+        return new FollowingResponse(true, users, hasMorePages);
     }
     async getFollowers(event: FollowingRequest){
         
@@ -60,17 +52,8 @@ export class FollowService{
         } else if(event.limit <= 0) {
             throw new Error("[Bad Request] Request needs to have a positive limit");
         }
-        let [followers, hasMorePages] = await this.followDao.getDAOFollowersAliases(event.followerAlias, event.limit, event.lastFolloweeAlias);
-        console.log(followers.length + " followers\n" + JSON.stringify(followers));
-        let users = await this.userDao.getUsersFromAliases(followers);
-    
-        //The users have to be in the same order that the followerAliaslist was in, otherwise the pagination for getFollowerAlias
-        // list gets messed up, since the wrong exclusive start key is used, and so some items are returned in multiple pages.
-        let sortedUsers = followers.map(f => {
-            let user = users.find(u => u.alias == f);
-            if(user === undefined) throw new Error("Get Followers: could not find user with alias " + f);
-            else return user;
-        });
-        return new FollowingResponse(true, sortedUsers, hasMorePages) ;
+        let [users, hasMorePages] = await this.followDao.getDAOFollowers(event.followerAlias, event.limit, event.lastFolloweeAlias);
+  
+        return new FollowingResponse(true, users, hasMorePages) ;
     }
 }

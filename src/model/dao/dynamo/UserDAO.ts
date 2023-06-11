@@ -3,7 +3,6 @@ import { BatchWriteCommand, GetCommand, PutCommand, UpdateCommand } from "@aws-s
 import { ddbDocClient } from "./ClientDynamo";
 import { User } from "../../domain/User";
 import { BatchGetItemCommand } from "@aws-sdk/client-dynamodb";
-import { IUserDao } from "../IDaoFactory";
 
 const TABLE_NAME = 'user';
 const PRIMARY_KEY = 'alias';
@@ -13,7 +12,8 @@ const PASSWORD = 'password';
 const IMAGE_URL = 'imageUrl';
 const FOLLOWING_COUNT = 'followingCount';
 const FOLLOWERS_COUNT = 'followersCount';
-export class UserDAO implements IUserDao{
+
+export class UserDao {
   async decrementFollowersCount(alias: string){
     const params = {
       TableName: TABLE_NAME,

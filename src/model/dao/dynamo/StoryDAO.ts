@@ -3,27 +3,28 @@ import { ddbClient, ddbDocClient } from "./ClientDynamo";
 import { Status } from "../../domain/Status";
 import { IStoryDao } from "../IDaoFactory";
 import { StatusListRequest } from "../net/request/StatusListRequest";
+import { User } from "../../domain/User";
 
 const TABLE_NAME = 'story';
 const PRIMARY_KEY = 'alias';
 const SORT_KEY = 'timestamp';
 const POST = 'post';
 
-export class StoryDAO implements IStoryDao{
-  async getStatusList(request: StatusListRequest): Promise<[Status[], boolean, Status | null]> {
+export class StoryDao{
+  async getStatusList(authorUser: User, limit: number, lastStatus: Status | null): Promise<[Status[], boolean, Status | null]> {
     let params;
-    if(request.lastStatus != undefined){
+    if(lastStatus != undefined){
         params =  {
             KeyConditionExpression: PRIMARY_KEY + " = :s",
             // FilterExpression: "contains (Subtitle, :topic)",
             ExpressionAttributeValues: {
-              ":s": { S:  request.authorUser.alias}
+              ":s": { S:  authorUser.alias}
             },
             TableName: TABLE_NAME,
-            Limit: request.limit,
+            Limit: limit,
             ExclusiveStartKey: {
-                [PRIMARY_KEY]: { S: request.lastStatus.user.alias},
-                [SORT_KEY]: { N: request.lastStatus.timestamp}
+                [PRIMARY_KEY]: { S: lastStatus.user.alias},
+                [SORT_KEY]: { N: lastStatus.timestamp}
             }
     
           };
@@ -32,7 +33,7 @@ export class StoryDAO implements IStoryDao{
         params =  {
           KeyConditionExpression: [PRIMARY_KEY] + " = :s",
           ExpressionAttributeValues: {
-            ":s": request.authorUser.alias
+            ":s": authorUser.alias
           },
           TableName: TABLE_NAME,
           Limit: 10, 
@@ -51,7 +52,7 @@ export class StoryDAO implements IStoryDao{
                
                 if(data.Items != undefined && data.Items.length > 0){
                     data.Items.forEach(s => {
-                      items.push(new Status(s[POST], request.authorUser, s[SORT_KEY]))});
+                      items.push(new Status(s[POST], authorUser, s[SORT_KEY]))});
                     // data.Items.forEach(s => console.log(s.followerAlias.S))
                 }
                 if(items.length == 0) hasMorePages = false;

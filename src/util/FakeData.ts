@@ -222,4 +222,18 @@ export class FakeData {
 
     return [fakeStatusesToReturn, statusIndex < this.fakeStatuses.length];
   }
+
+  /**
+   * Returns a followers count for the user. Always returns 20 for male users and 21 for female users.
+   */
+  public getFollowersCount(user: User): number | PromiseLike<number> {
+    return user.imageUrl === FEMALE_IMAGE_URL ? 21 : 20;
+  }
+
+  /**
+   * Returns a followees count for the user. Always returns 10 for male users and 11 for female users.
+   */
+  public getFolloweesCount(user: User): number | PromiseLike<number> {
+    return user.imageUrl === FEMALE_IMAGE_URL ? 11 : 10;
+  }
 }
