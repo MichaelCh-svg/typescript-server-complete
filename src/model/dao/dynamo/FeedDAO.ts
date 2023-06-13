@@ -66,6 +66,7 @@ export class FeedDao {
 
     async putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
         // trying to batchwrite zero items throws an error
+        console.log('feed dao put feeds with followerAliases ' + JSON.stringify(followersAliases) + ' and authorAlias ' + authorAlias + ' and timestamp ' + timestamp);
         let length = followersAliases.length;
         let batchSize = 10;
         console.log(followersAliases.length + ' followers');

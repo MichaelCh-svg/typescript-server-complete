@@ -12,13 +12,9 @@ import { User } from "../domain/User";
 export class StatusService{
     private storyDao : IStoryDao;
     private feedDao: IFeedDao;
-    private userDao: IUserDao;
-    private followDao: IFollowDao;
     constructor(daoFactory: IDaoFactory){
         this.storyDao = daoFactory.getStoryDao();;
         this.feedDao = daoFactory.getFeedDao();
-        this.userDao = daoFactory.getUserDao();
-        this.followDao = daoFactory.getFollowDao();
     }
     async getFeed(event: StatusListRequest){
 
@@ -26,37 +22,27 @@ export class StatusService{
         let targetUser = User.FromJson(JSON.stringify(event.authorUser));
         if(targetUser == null) throw new Error('get Feed user json could not be converted to user object\nuser: ' + JSON.stringify(event.authorUser));
         let [statusList, hasMorePages] = await this.feedDao.getFeedList(targetUser.alias, event.lastStatus, event.limit);
-        return new StoryFeedResponse(true, statusList, hasMorePages);
+        return new StoryFeedResponse(true, statusList, hasMorePages, 'feed');
     }
     
     async getStory(event: StatusListRequest){
     
         //since serializaing and deserializing an object disables the 'get' function for the alias, the alias cannot be retrieved from the lambda event.
         let targetUser = User.FromJson(JSON.stringify(event.authorUser));
-        if(targetUser == null) throw new Error('get Feed user json could not be converted to user object\nuser: ' + JSON.stringify(event.authorUser));
+        if(targetUser == null) throw new Error('get Story user json could not be converted to user object\nuser: ' + JSON.stringify(event.authorUser));
         event.authorUser = targetUser;
         if(event.lastStatus != null){
             let lastStatusUser = User.FromJson(JSON.stringify(event.lastStatus.user));
             if(lastStatusUser != null) event.lastStatus.user = lastStatusUser;
-            else throw new Error("get Feed last status\'s user json could not be converted to user object\nstatus: " + JSON.stringify(event.lastStatus));
+            else throw new Error("get Story last status\'s user json could not be converted to user object\nstatus: " + JSON.stringify(event.lastStatus));
         }
         let [statusList, hasMorePages] = await this.storyDao.getStatusList(event);
-        return new StoryFeedResponse(true, statusList, hasMorePages);
+        return new StoryFeedResponse(true, statusList, hasMorePages, 'story');
     }
     
-    async postStatusToSQS(event: PostStatusRequest){
-        await postStatusToSQSFromSQSService(event);
+   
+    async postStatus(event: PostStatusRequest){
+        await this.storyDao.putStory(event);
         return new Response(true, event.alias + " posted " + event.post);
     }
-    async postStatus(event: PostStatusToSQSRequest){
-        await this.storyDao.putStory(event.alias, event.timestamp, event.post);
-        await this.feedDao.putFeeds(event.alias, event.post, event.timestamp);
-    
-        return new Response(true, event.alias + " posted " + event.post + " at " + event.timestamp);
-    }
-    // async postStatusToFeed(event: PostFeedToSQSRequest){
-    //     await this.feedDao.putFeeds(event.authorAlias, event.post, event.followerAliasList, event.timestamp);
-    
-    //     return new Response(true, event.authorAlias + " posted " + event.post + " at " + event.timestamp);
-    // }
 }

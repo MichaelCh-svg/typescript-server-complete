@@ -5,5 +5,5 @@ import { getStatusService } from "./factory/factory";
 
 export const handler = async(event: PostStatusRequest) => {
     // TODO implement
-    return getStatusService().postStatusToSQS(event);
+    return getStatusService().postStatus(event);
 };

@@ -1,6 +1,7 @@
 import { FakeData } from "../../../util/FakeData";
 import { Status } from "../../domain/Status";
 import { IStoryDao } from "../IDaoFactory";
+import { PostStatusRequest } from "../net/request/PostStatusRequest";
 import { StatusListRequest } from "../net/request/StatusListRequest";
 
 export class StoryDaoFake implements IStoryDao {
@@ -22,7 +23,7 @@ export class StoryDaoFake implements IStoryDao {
         let hasMorePages = remainingStatusesCount > request.limit;
         return [responseStatuses, hasMorePages];
     }
-    async putStory(alias: string, timestamp: number, post: string): Promise<void> {
+    async putStory(event: PostStatusRequest): Promise<void> {
         return;
     }
     

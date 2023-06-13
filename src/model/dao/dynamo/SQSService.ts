@@ -4,6 +4,10 @@ import * as dotenv from 'dotenv'
 import { PostStatusToSQSRequest } from "./PostStatusToSQSRequest";
 import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
 import { PostStatusRequest } from "../net/request/PostStatusRequest";
+import { Response } from "../net/response/Response";
+import { StoryDao } from "./StoryDao";
+import { FeedDao } from "./FeedDao";
+import { FeedDaoFace } from "./FeedDaoFace";
 dotenv.config()
 
 let sqsClient = new SQSClient({ region: process.env.REGION })
@@ -49,4 +53,17 @@ try {
   throw err;
 }
 };
+
+export async function postStatusToSQS(event: PostStatusRequest){
+  await postStatusToSQSFromSQSService(event);
+  return new Response(true, event.alias + " posted " + event.post);
+}
+export async function postStatusFromSQSService(event: PostStatusToSQSRequest){
+  let storyDao = new StoryDao();
+  let feedDao = new FeedDaoFace();
+  await storyDao.putStory(event.alias, event.timestamp, event.post);
+  await feedDao.putFeeds(event.alias, event.post, event.timestamp);
+
+  return new Response(true, event.alias + " posted " + event.post + " at " + event.timestamp);
+}
 

@@ -1,5 +1,6 @@
 import { Status } from "../domain/Status";
 import { User } from "../domain/User";
+import { PostStatusRequest } from "./net/request/PostStatusRequest";
 import { StatusListRequest } from "./net/request/StatusListRequest";
 
 export interface IDaoFactory{
@@ -38,5 +39,5 @@ export interface IFeedDao{
 }
 export interface IStoryDao{
     getStatusList(request: StatusListRequest): Promise<[Status[], boolean]>;
-    putStory(alias: string, timestamp: number, post: string): Promise<void>;
+    putStory(event: PostStatusRequest): Promise<void>;
 }

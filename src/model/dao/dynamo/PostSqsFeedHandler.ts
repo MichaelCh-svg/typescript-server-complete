@@ -10,7 +10,8 @@ export const handler = async function(event: any){
     const { body } = event.Records[i];
       request = JSON.parse(body);
       // reqList.push(request);
-        await feedDao.putFeeds(event.authorAlias, event.post, event.followerAliasList, event.timestamp);
+      console.log('feed sqs request ' + JSON.stringify(request));
+      await feedDao.putFeeds(request.authorAlias, request.post, request.followerAliasList, request.timestamp);
       }
   return null;
 }
