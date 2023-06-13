@@ -11,7 +11,7 @@ const SORT_KEY = 'timestamp';
 const POST = 'post';
 
 export class StoryDao{
-  async getStatusList(authorUser: User, limit: number, lastStatus: Status | null): Promise<[Status[], boolean, Status | null]> {
+  async getStatusList(authorUser: User, limit: number, lastStatus: Status | null): Promise<[Status[], boolean]> {
     let params;
     if(lastStatus != undefined){
         params =  {
@@ -43,7 +43,6 @@ export class StoryDao{
       console.log(JSON.stringify(params));
       let items : Status[] = [];
       let hasMorePages = true;
-      let lastEvaluatedStatus = null;
       let data;
         try {
             
@@ -56,16 +55,15 @@ export class StoryDao{
                     // data.Items.forEach(s => console.log(s.followerAlias.S))
                 }
                 if(items.length == 0) hasMorePages = false;
-                if(data.LastEvaluatedKey != undefined){
-                  lastEvaluatedStatus = items.findLast;
+                if(data.LastEvaluatedKey == undefined){
+                  hasMorePages = false
               }
-              else hasMorePages = false;
             });
         }
         catch (err) {
             throw err;
             };
-      return [items, hasMorePages, lastEvaluatedStatus];
+      return [items, hasMorePages];
           }
   async putStory(alias: string, timestamp: number, post: string) {
       // Set the parameters.

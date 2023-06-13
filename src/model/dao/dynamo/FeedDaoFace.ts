@@ -11,8 +11,8 @@ export class FeedDaoFace implements IFeedDao{
     private userDao = new UserDao();
     private followDao = new FollowDao();
 
-    async getFeedList(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean, Status | null]> {
-        let [statusList, hasMorePages, lastEvaluatedStatus] = await this.feedDao.getFeedStatusListWithoutUsers(alias, lastStatus, limit);
+    async getFeedList(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean]> {
+        let [statusList, hasMorePages] = await this.feedDao.getFeedStatusListWithoutUsers(alias, lastStatus, limit);
         let aliasList = statusList.map(s => s.user.alias);
         let aliastListNoDuplicates = [...new Set(aliasList)];
         let userList = await this.userDao.getUsersFromAliases(aliastListNoDuplicates);
@@ -20,7 +20,7 @@ export class FeedDaoFace implements IFeedDao{
             let user = userList.find(u => u.alias == s.user.alias);
             if(user !== undefined) s.user = user;
             else throw new Error('status could not find user with alias ' + s.user.alias)})
-        return [statusList, hasMorePages, lastEvaluatedStatus];
+        return [statusList, hasMorePages];
     }
     async putFeeds(authorAlias: string, post: string, timestamp: number): Promise<void> {
         let followers, hasMorePages, lastEvaluatedFollowerAlias = null;

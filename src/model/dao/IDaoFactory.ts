@@ -33,10 +33,10 @@ export interface IFollowDao{
 }
 export interface IFeedDao{
     //change to get feeds, 
-    getFeedList(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean, Status | null]>;
+    getFeedList(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean]>;
     putFeeds(authorAlias: string, post: string, timestamp: number): Promise<void>;
 }
 export interface IStoryDao{
-    getStatusList(request: StatusListRequest): Promise<[Status[], boolean, Status | null]>;
+    getStatusList(request: StatusListRequest): Promise<[Status[], boolean]>;
     putStory(alias: string, timestamp: number, post: string): Promise<void>;
 }

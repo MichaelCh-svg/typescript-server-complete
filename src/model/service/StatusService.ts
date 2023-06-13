@@ -25,8 +25,8 @@ export class StatusService{
         //since serializaing and deserializing an object disables the 'get' function for the alias, the alias cannot be retrieved from the lambda event.
         let targetUser = User.FromJson(JSON.stringify(event.authorUser));
         if(targetUser == null) throw new Error('get Feed user json could not be converted to user object\nuser: ' + JSON.stringify(event.authorUser));
-        let [statusList, hasMorePages, lastEvaluatedStatus] = await this.feedDao.getFeedList(targetUser.alias, event.lastStatus, event.limit);
-        return new StoryFeedResponse(true, statusList, hasMorePages, lastEvaluatedStatus);
+        let [statusList, hasMorePages] = await this.feedDao.getFeedList(targetUser.alias, event.lastStatus, event.limit);
+        return new StoryFeedResponse(true, statusList, hasMorePages);
     }
     
     async getStory(event: StatusListRequest){
@@ -40,8 +40,8 @@ export class StatusService{
             if(lastStatusUser != null) event.lastStatus.user = lastStatusUser;
             else throw new Error("get Feed last status\'s user json could not be converted to user object\nstatus: " + JSON.stringify(event.lastStatus));
         }
-        let [statusList, hasMorePages, lastEvaluatedStatus] = await this.storyDao.getStatusList(event);
-        return new StoryFeedResponse(true, statusList, hasMorePages, lastEvaluatedStatus);
+        let [statusList, hasMorePages] = await this.storyDao.getStatusList(event);
+        return new StoryFeedResponse(true, statusList, hasMorePages);
     }
     
     async postStatusToSQS(event: PostStatusRequest){

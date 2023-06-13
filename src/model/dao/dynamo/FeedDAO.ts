@@ -11,7 +11,7 @@ export class FeedDao {
     private AUTHOR_ALIAS = 'authorAlias';
     private POST = 'post';
 
-    async getFeedStatusListWithoutUsers(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean, Status | null]> {
+    async getFeedStatusListWithoutUsers(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean]> {
         let params;
         if(lastStatus != undefined){
             params =  {
@@ -43,7 +43,6 @@ export class FeedDao {
         console.log(JSON.stringify(params));
         let items : Status[] = [];
         let hasMorePages = true;
-        let lastEvaluatedStatus = null;
         let data;
             try {
                 
@@ -54,16 +53,15 @@ export class FeedDao {
                         items.push(new Status(s[this.POST], new User('undefined', 'undefined', s[this.AUTHOR_ALIAS], 'undefined'), s[this.SORT_KEY]))});
                     }
                     if(items.length == 0) hasMorePages = false;
-                    if(data.LastEvaluatedKey != undefined){
-                        lastEvaluatedStatus =  items.findLast;
+                    if(data.LastEvaluatedKey == undefined){
+                        hasMorePages = false;
                     }
-                    else hasMorePages = false;
                 });
             }
             catch (err) {
                 throw err;
                 };
-        return [items, hasMorePages, lastEvaluatedStatus];
+        return [items, hasMorePages];
             }
 
     async putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
