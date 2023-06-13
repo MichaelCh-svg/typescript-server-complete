@@ -1,31 +1,32 @@
 import { QueryCommand } from "@aws-sdk/client-dynamodb";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
 import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
-
-const TABLE_NAME = 'follow';
-const INDEX_NAME = 'follow-index';
-const PRIMARY_KEY = 'followerAlias';
-const SORT_KEY = 'followeeAlias';
+import { getEnvValue } from "../../../util/EnvString";
 
 export class FollowDao{
+  private TABLE_NAME = getEnvValue('FOLLOW_TABLE_NAME');
+  private INDEX_NAME = getEnvValue('FOLLOW_INDEX_NAME');
+  private PRIMARY_KEY = getEnvValue('FOLLOW_PRIMARY_KEY');
+  private SORT_KEY = getEnvValue('FOLLOW_SORT_KEY');
+
   async isFollowing (followerAlias: string, followeeAlias: string) {
     const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Key: {
-            [PRIMARY_KEY]:  followerAlias,
-            [SORT_KEY]: followeeAlias
+            [this.PRIMARY_KEY]:  followerAlias,
+            [this.SORT_KEY]: followeeAlias
         },
-        ProjectionExpression: SORT_KEY
+        ProjectionExpression: this.SORT_KEY
     };
     return await ddbDocClient.send(new GetCommand(params)).then(data => data.Item !== undefined)
   };
   async deleteFollow(alias: string, aliasToFollow: string) {
       // Set the parameters.
       const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Key: {
-          [PRIMARY_KEY]: alias, //e.g. title: "Rush"
-          [SORT_KEY]: aliasToFollow, // e.g. year: "2013"
+          [this.PRIMARY_KEY]: alias, //e.g. title: "Rush"
+          [this.SORT_KEY]: aliasToFollow, // e.g. year: "2013"
         },
       };
       try {
@@ -37,10 +38,10 @@ export class FollowDao{
   async putFollow(alias: string, aliasToFollow: string) {
       // Set the parameters.
       const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Item: {
-          [PRIMARY_KEY]: alias, //e.g. title: "Rush"
-          [SORT_KEY]: aliasToFollow, // e.g. year: "2013"
+          [this.PRIMARY_KEY]: alias, //e.g. title: "Rush"
+          [this.SORT_KEY]: aliasToFollow, // e.g. year: "2013"
         },
       };
       try {
@@ -53,18 +54,18 @@ export class FollowDao{
       let params;
       if(lastFollowerAlias != undefined){
           params =  {
-              KeyConditionExpression: SORT_KEY + " = :s",
+              KeyConditionExpression: this.SORT_KEY + " = :s",
               // FilterExpression: "contains (Subtitle, :topic)",
               ExpressionAttributeValues: {
                 ":s": { S:  followeeAlias}
               },
-              ProjectionExpression: PRIMARY_KEY,
-              TableName: TABLE_NAME,
-              IndexName: INDEX_NAME,
+              ProjectionExpression: this.PRIMARY_KEY,
+              TableName: this.TABLE_NAME,
+              IndexName: this.INDEX_NAME,
               Limit: limit,
               ExclusiveStartKey: {
-                [SORT_KEY]: { S: followeeAlias},
-                [PRIMARY_KEY]: { S: lastFollowerAlias}
+                [this.SORT_KEY]: { S: followeeAlias},
+                [this.PRIMARY_KEY]: { S: lastFollowerAlias}
               }
       
             };
@@ -72,14 +73,14 @@ export class FollowDao{
       }
       else{
           params =  {
-              KeyConditionExpression: SORT_KEY + " = :s",
+              KeyConditionExpression: this.SORT_KEY + " = :s",
               // FilterExpression: "contains (Subtitle, :topic)",
               ExpressionAttributeValues: {
                 ":s": { S:  followeeAlias}
               },
-              ProjectionExpression: PRIMARY_KEY,
-              TableName: TABLE_NAME,
-              IndexName: INDEX_NAME,
+              ProjectionExpression: this.PRIMARY_KEY,
+              TableName: this.TABLE_NAME,
+              IndexName: this.INDEX_NAME,
               Limit: limit, 
             };
             console.log("get followers params first page\n" + JSON.stringify(params));
@@ -93,13 +94,16 @@ export class FollowDao{
               
               data = await ddbClient.send(new QueryCommand(params)).then(data => {
                   if(data.LastEvaluatedKey != undefined){
-                      lastEvaluatedFollowerAlias = data.LastEvaluatedKey.followerAlias.S;
+                      lastEvaluatedFollowerAlias = data.LastEvaluatedKey[this.PRIMARY_KEY].S;
                   }
                   else hasMorePages = false;
                  
                   
                   if(data.Items != undefined){
-                      data.Items.forEach(s => {if (s[PRIMARY_KEY].S != undefined) items.push(s[PRIMARY_KEY].S)});
+                      data.Items.forEach(s => {
+                        let followerAlias = s[this.PRIMARY_KEY].S;
+                        if (followerAlias != undefined) items.push(followerAlias)
+                      });
                       // data.Items.forEach(s => console.log(s.followerAlias.S))
                   }
                   if(items.length == 0) hasMorePages = false;
@@ -116,30 +120,30 @@ export class FollowDao{
     let params;
     if(lastFolloweeAlias != undefined){
         params =  {
-            KeyConditionExpression: PRIMARY_KEY + " = :s",
+            KeyConditionExpression: this.PRIMARY_KEY + " = :s",
             // FilterExpression: "contains (Subtitle, :topic)",
             ExpressionAttributeValues: {
               ":s": { S:  followerAlias}
             },
-            ProjectionExpression: SORT_KEY,
-            TableName: TABLE_NAME,
+            ProjectionExpression: this.SORT_KEY,
+            TableName: this.TABLE_NAME,
             Limit: limit,
             ExclusiveStartKey: {
-                [PRIMARY_KEY]: { S: followerAlias},
-                [SORT_KEY]: { S: lastFolloweeAlias}
+                [this.PRIMARY_KEY]: { S: followerAlias},
+                [this.SORT_KEY]: { S: lastFolloweeAlias}
             }
     
           };
     }
     else{
         params =  {
-            KeyConditionExpression: PRIMARY_KEY + " = :s",
+            KeyConditionExpression: this.PRIMARY_KEY + " = :s",
             // FilterExpression: "contains (Subtitle, :topic)",
             ExpressionAttributeValues: {
               ":s": { S:  followerAlias}
             },
-            ProjectionExpression: SORT_KEY,
-            TableName: TABLE_NAME,
+            ProjectionExpression: this.SORT_KEY,
+            TableName: this.TABLE_NAME,
             Limit: limit, 
           };
     }
@@ -152,13 +156,16 @@ export class FollowDao{
             
             data = await ddbClient.send(new QueryCommand(params)).then(data => {
                 if(data.LastEvaluatedKey != undefined){
-                    lastEvaluatedFollowerAlias = data.LastEvaluatedKey.followerAlias.S;
+                    lastEvaluatedFollowerAlias = data.LastEvaluatedKey[this.PRIMARY_KEY].S;
                 }
                 else hasMorePages = false;
                
                 
                 if(data.Items != undefined){
-                    data.Items.forEach(s => {if (s[SORT_KEY].S != undefined) items.push(s[SORT_KEY].S)});
+                    data.Items.forEach(s => {
+                      let followeeAlias = s[this.SORT_KEY].S;
+                      if (followeeAlias != undefined) items.push(followeeAlias)
+                    });
                     // data.Items.forEach(s => console.log(s.followerAlias.S))
                 }
                 if(items.length == 0) hasMorePages = false;
@@ -211,7 +218,7 @@ export class FollowDao{
       else{
           const params = {
               RequestItems: {
-                [TABLE_NAME]: this.createPutFollowRequestBatch(followeeAlias, followerAliasList)
+                [this.TABLE_NAME]: this.createPutFollowRequestBatch(followeeAlias, followerAliasList)
               }
             }
   
@@ -224,8 +231,8 @@ export class FollowDao{
   }
   private createPutFollowRequest(followerAlias: string, followeeAlias: string){
       let item = {
-          [PRIMARY_KEY]: followerAlias,
-          [SORT_KEY]: followeeAlias,
+          [this.PRIMARY_KEY]: followerAlias,
+          [this.SORT_KEY]: followeeAlias,
       }
       let request = {
           PutRequest: {

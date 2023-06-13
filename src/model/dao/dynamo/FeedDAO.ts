@@ -2,14 +2,16 @@ import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
 import { Status } from "../../domain/Status";
 import { User } from "../../domain/User";
-import { IFeedDao } from "../IDaoFactory";
+import { getEnvValue } from "../../../util/EnvString";
+
 
 export class FeedDao {
-    private TABLE_NAME = 'feed';
-    private PRIMARY_KEY = 'followerAlias';
-    private SORT_KEY = 'timestamp';
-    private AUTHOR_ALIAS = 'authorAlias';
-    private POST = 'post';
+    private TABLE_NAME = getEnvValue('FEED_TABLE_NAME');
+    private PRIMARY_KEY = getEnvValue('FEED_PRIMARY_KEY');
+    private SORT_KEY = getEnvValue('FEED_SORT_KEY');
+    private AUTHOR_ALIAS = getEnvValue('FEED_AUTHOR_ALIAS');
+    private POST = getEnvValue('FEED_POST');
+
 
     async getFeedStatusListWithoutUsers(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean]> {
         let params;
@@ -66,7 +68,6 @@ export class FeedDao {
 
     async putFeeds(authorAlias: string, post: string, followersAliases: string[], timestamp: number){
         // trying to batchwrite zero items throws an error
-        console.log('feed dao put feeds with followerAliases ' + JSON.stringify(followersAliases) + ' and authorAlias ' + authorAlias + ' and timestamp ' + timestamp);
         let length = followersAliases.length;
         let batchSize = 10;
         console.log(followersAliases.length + ' followers');

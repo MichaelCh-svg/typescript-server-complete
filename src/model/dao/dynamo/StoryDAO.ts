@@ -1,41 +1,41 @@
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
 import { Status } from "../../domain/Status";
-import { IStoryDao } from "../IDaoFactory";
-import { StatusListRequest } from "../net/request/StatusListRequest";
 import { User } from "../../domain/User";
+import { getEnvValue } from "../../../util/EnvString";
 
-const TABLE_NAME = 'story';
-const PRIMARY_KEY = 'alias';
-const SORT_KEY = 'timestamp';
-const POST = 'post';
 
 export class StoryDao{
+
+  private TABLE_NAME = getEnvValue('STORY_TABLE_NAME');
+  private PRIMARY_KEY = getEnvValue('STORY_PRIMARY_KEY');
+  private SORT_KEY = getEnvValue('STORY_SORT_KEY');
+  private POST = getEnvValue('STORY_POST');
   async getStatusList(authorUser: User, limit: number, lastStatus: Status | null): Promise<[Status[], boolean]> {
     let params;
     if(lastStatus != undefined){
         params =  {
-            KeyConditionExpression: PRIMARY_KEY + " = :s",
+            KeyConditionExpression: this.PRIMARY_KEY + " = :s",
             // FilterExpression: "contains (Subtitle, :topic)",
             ExpressionAttributeValues: {
               ":s": { S:  authorUser.alias}
             },
-            TableName: TABLE_NAME,
+            TableName: this.TABLE_NAME,
             Limit: limit,
             ExclusiveStartKey: {
-                [PRIMARY_KEY]: { S: lastStatus.user.alias},
-                [SORT_KEY]: { N: lastStatus.timestamp}
+                [this.PRIMARY_KEY]: { S: lastStatus.user.alias},
+                [this.SORT_KEY]: { N: lastStatus.timestamp}
             }
     
           };
     }
     else{
         params =  {
-          KeyConditionExpression: [PRIMARY_KEY] + " = :s",
+          KeyConditionExpression: [this.PRIMARY_KEY] + " = :s",
           ExpressionAttributeValues: {
             ":s": authorUser.alias
           },
-          TableName: TABLE_NAME,
+          TableName: this.TABLE_NAME,
           Limit: 10, 
         };
         
@@ -51,7 +51,7 @@ export class StoryDao{
                
                 if(data.Items != undefined && data.Items.length > 0){
                     data.Items.forEach(s => {
-                      items.push(new Status(s[POST], authorUser, s[SORT_KEY]))});
+                      items.push(new Status(s[this.POST], authorUser, s[this.SORT_KEY]))});
                     // data.Items.forEach(s => console.log(s.followerAlias.S))
                 }
                 if(items.length == 0) hasMorePages = false;
@@ -68,11 +68,11 @@ export class StoryDao{
   async putStory(alias: string, timestamp: number, post: string) {
       // Set the parameters.
       const params = {
-        TableName: TABLE_NAME,
+        TableName: this.TABLE_NAME,
         Item: {
-          [PRIMARY_KEY]: alias, //e.g. title: "Rush"
-          [SORT_KEY]: timestamp, // e.g. year: "2013"
-          [POST]: post,
+          [this.PRIMARY_KEY]: alias, //e.g. title: "Rush"
+          [this.SORT_KEY]: timestamp, // e.g. year: "2013"
+          [this.POST]: post,
         },
       };
       try {

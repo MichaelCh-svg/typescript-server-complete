@@ -3,17 +3,20 @@ import { BatchWriteCommand, GetCommand, PutCommand, UpdateCommand } from "@aws-s
 import { ddbDocClient } from "./ClientDynamo";
 import { User } from "../../domain/User";
 import { BatchGetItemCommand } from "@aws-sdk/client-dynamodb";
+import { getEnvValue } from "../../../util/EnvString";
 
-const TABLE_NAME = 'user';
-const PRIMARY_KEY = 'alias';
-const FIRST_NAME = 'firstName';
-const LAST_NAME = 'lastName';
-const PASSWORD = 'password';
-const IMAGE_URL = 'imageUrl';
-const FOLLOWING_COUNT = 'followingCount';
-const FOLLOWERS_COUNT = 'followersCount';
+
+const TABLE_NAME = getEnvValue('USER_TABLE_NAME');
+const PRIMARY_KEY = getEnvValue('USER_PRIMARY_KEY');
+const FIRST_NAME = getEnvValue('USER_FIRST_NAME');
+const LAST_NAME = getEnvValue('USER_LAST_NAME');
+const PASSWORD = getEnvValue('USER_PASSWORD');
+const IMAGE_URL = getEnvValue('USER_IMAGE_URL');
+const FOLLOWING_COUNT = getEnvValue('USER_FOLLOWING_COUNT');
+const FOLLOWERS_COUNT = getEnvValue('USER_FOLLOWERS_COUNT');
 
 export class UserDao {
+
   async decrementFollowersCount(alias: string){
     const params = {
       TableName: TABLE_NAME,
@@ -65,7 +68,7 @@ export class UserDao {
     return await ddbDocClient.send(new GetCommand(params)).then(data => {
       let userData = data.Item;
       if(userData != undefined){
-        return new User(userData.firstName, userData.lastName, userData.alias, userData.imageUrl);
+        return new User(userData[FIRST_NAME], userData[LAST_NAME], userData[PRIMARY_KEY], userData[IMAGE_URL]);
       }
       else throw new Error('user not found for user with alias ' + username);
   })}
@@ -155,11 +158,19 @@ export class UserDao {
               data = await ddbDocClient.send(command).then(data => {
                  
                   if(data.Responses != undefined){
-                      // unfortunately, I can't use s.PRIMARY_KEY.S, because I can't use variables here.
-                      // Instead we have to hardcode the value.
+                      
                       data.Responses[TABLE_NAME].forEach(s => {
-                        items.push(new User(s.firstName.S === undefined ? 'undefined': s[FIRST_NAME].S, s[LAST_NAME].S === undefined ? 'undefined': s.lastName.S,
-                        s.alias.S === undefined ? 'undefined': s.alias.S, s.imageUrl.S === undefined ? 'undefined': s.imageUrl.S))});
+                        let alias = s[PRIMARY_KEY].S;
+                        let firstname = s[FIRST_NAME].S;
+                        let lastname = s[LAST_NAME].S;
+                        let imageUrl = s[IMAGE_URL].S;
+
+                        alias = alias  === undefined ? 'undefined' : alias;
+                        firstname = firstname === undefined ? 'undefined' : firstname;
+                        lastname = lastname === undefined ? 'undefined' : lastname;
+                        imageUrl = imageUrl === undefined ? 'undefined' : imageUrl;
+
+                        items.push(new User(firstname, lastname, alias, imageUrl))});
                   }
               });
           }

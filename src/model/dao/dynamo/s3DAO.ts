@@ -1,8 +1,8 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import * as dotenv from 'dotenv'
-dotenv.config()
-const BUCKET = process.env.BUCKET;
-const REGION = process.env.REGION;
+import { getEnvValue } from "../../../util/EnvString";
+
+const BUCKET = getEnvValue('BUCKET');
+const REGION = getEnvValue('REGION');
 
 export async function setS3Image(imageStringEncodedBase64: string, alias: string){
     // console.log("setS3Image");
@@ -20,7 +20,7 @@ export async function setS3Image(imageStringEncodedBase64: string, alias: string
     const client = new S3Client({ region: REGION });
     try{
         await client.send(c);
-        return "https://" + process.env.BUCKET + ".s3.us-west-2.amazonaws.com/" + fileName;
+        return "https://" + BUCKET + ".s3.us-west-2.amazonaws.com/" + fileName;
     }
     catch(error){
         throw error;
