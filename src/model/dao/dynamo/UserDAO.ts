@@ -1,5 +1,5 @@
 
-import { BatchWriteCommand, GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbDocClient } from "./ClientDynamo";
 import { User } from "../../domain/User";
 import { BatchGetItemCommand } from "@aws-sdk/client-dynamodb";
@@ -179,37 +179,7 @@ export class UserDao {
               };
         return items;       
   }
-  
-  
-    //following functions not used by the application, but for setting up the data
-  
-    async createUsers(firstName: string, lastName: string, aliasList: string[], password: string, imageUrl: string){
-      const params = {
-                    RequestItems: {
-                      [TABLE_NAME]: this.createPutUserRequestBatch(firstName, lastName, aliasList, password, imageUrl)
-                    }
-                  }
-  
-      await ddbDocClient.send(new BatchWriteCommand(params))
-  }
-  createPutUserRequestBatch(firstName: string, lastName: string, aliasList: string[], password: string, imageUrl: string){
-      return aliasList.map(alias => this.createPutUserRequest(firstName, lastName, alias, password, imageUrl));
-  }
-  createPutUserRequest(firstName: string, lastName: string, alias: string, password: string, imageUrl: string){
-      let item = {
-          [PRIMARY_KEY]: alias,
-          [FIRST_NAME]: firstName,
-          [LAST_NAME]: lastName,
-          [PASSWORD]: password,
-          [IMAGE_URL]: imageUrl
-      }
-      let request = {
-          PutRequest: {
-              Item: item
-          }
-      }
-      return request;
-  }
+
 }
 
 

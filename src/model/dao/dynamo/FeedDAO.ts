@@ -27,7 +27,8 @@ export class FeedDao {
                 ExclusiveStartKey: {
                     [this.PRIMARY_KEY]: { S: lastStatus.user.alias},
                     [this.SORT_KEY]: { N: lastStatus.timestamp}
-                }
+                },
+                ScanIndexForward: false
         
             };
         }
@@ -38,7 +39,8 @@ export class FeedDao {
                 ":s": alias
             },
             TableName: this.TABLE_NAME,
-            Limit: 10, 
+            Limit: 10,
+            ScanIndexForward: false 
             };
             
         }
@@ -89,8 +91,9 @@ export class FeedDao {
         let resp = await ddbDocClient.send(new BatchWriteCommand(params))
         if(resp.UnprocessedItems != undefined){
             let ms = 1000;
+            
             while(Object.keys(resp.UnprocessedItems).length > 0) {
-                console.log(Object.keys(resp.UnprocessedItems.feed).length + ' unprocessed items');
+                console.log(Object.keys(resp.UnprocessedItems[this.TABLE_NAME]).length + ' unprocessed items');
                 //The ts-ignore with an @ in front must be as a comment in order to ignore an error for the next line for compiling. 
                 // @ts-ignore 
                 params.RequestItems = resp.UnprocessedItems;

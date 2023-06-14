@@ -39,6 +39,7 @@ echo -e '\n\n\ntypescript-complete.zip uploaded to the bucket. Updating lambda f
 # The lambedas have to reload their code source to get the updated s3 code.
 i=1
 PID=0
+pids=()
 for lambda in $LAMBDALIST
 do
     aws lambda update-function-code \
@@ -51,12 +52,12 @@ do
         # redirecting standard output to /dev/null just means that it doesn't get saved anywhere
         # standard error should still show up in the terminal as it is represented by the number 2 instead of 1
     echo lambda $i, $lambda, uploading
+    pids[${i-1}]=$!
     ((i=i+1))
-    PID=$!
 done
-wait $PID
-echo -e '\nLast lambda function uploaded, the others have likely uploaded too but could require a couple extra seconds.'
-
+for pid in ${pids[*]}; do
+    wait $pid
+done
 
 # using -e let's us use escape characters such as \n if the output is in quotation marks
 echo -e '\nLambda functions updated. Standard output is redirected to /dev/null and so it is not visible, but standard errors should show up in the terminal.'

@@ -25,7 +25,8 @@ export class StoryDao{
             ExclusiveStartKey: {
                 [this.PRIMARY_KEY]: { S: lastStatus.user.alias},
                 [this.SORT_KEY]: { N: lastStatus.timestamp}
-            }
+            },
+            ScanIndexForward: false
     
           };
     }
@@ -37,6 +38,7 @@ export class StoryDao{
           },
           TableName: this.TABLE_NAME,
           Limit: 10, 
+          ScanIndexForward: false
         };
         
     }

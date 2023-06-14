@@ -1,29 +1,60 @@
 import { execSync } from "child_process";
+import { User } from "../model/domain/User";
+import { FollowDaoFillTable } from "./FollowDaoFillTable";
+import { UserDaoFillTable } from "./UserDaoFillTable";
 
-let mainUserName = "@calvin";
-let followername = "@colonel";
+//This code assumes that you have already created a user with the mainUserName. 
+// Since async and await don't work here, I try using execsync to prevent throttling of the dynamodb tables.
+// Throttling causes items to not be written.
+
+let mainUserName = "@cat";
+let followername = "@serpent";
 let password = "password";
 let imageUrl = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
 let firstName = "first";
 let lastName = "last";
 
-let numUsers = 300;
+let numUsers = 10000;
 let batchSize = 25;
 let aliasList: string[] = Array.from({length: numUsers}, (_, i) => followername + (i+1));
-for(let i = 0; i < numUsers; i+=batchSize){
-    console.log(aliasList.slice(i, i+batchSize));
+let followDaoFillTable = new FollowDaoFillTable();
+let userDaoFillTable = new UserDaoFillTable();
+
+console.log('setting followers');
+setFollowers(0);
+console.log('setting users');
+setUsers(0);
+userDaoFillTable.increaseFollowersCount(mainUserName, numUsers);
+
+function setFollowers(i: number){
+    if(i >= numUsers) return;
+    else if(i % 1000 == 0) {
+        console.log(i + ' followers');
+    }
+    let followList = aliasList.slice(i, i + batchSize);
+    followDaoFillTable.createFollowsInBatches(mainUserName, followList)
+    .then(()=> setFollowers(i + batchSize))
+    .catch(err => console.log('error while setting followers: ' + err));
 }
-// console.log(aliasList);
-// createFollows(mainUserName, followername, numUsers)
-// for(let i = 0; i < numUsers; i+=batchSize){
-//     // createUsers(firstName, lastName, aliasList.slice(i, i+batchSize), password, imageUrl)
-    
-//     // delay(mainUserName, aliasList.slice(i, i+batchSize))
-//     // if you run this code too fast, it doesn't actually write to the table.
-//     // Check the table to make sure all 10,000 are there.
-//     execSync('sleep 0.3');
-//     console.log( (i+batchSize) + ' followers created');
-// }
-// async function delay(userName: string, aliases: string[]){
-//     await createFollows(userName, aliases)
-// }
+function setUsers(i: number){
+    if(i >= numUsers) return;
+    else if(i % 1000 == 0) {
+        console.log(i + ' users');
+    }
+    let userList = createUserList(i);
+    // console.log(userList);
+    userDaoFillTable.createUsers(userList, password)
+    .then(()=> setUsers(i + batchSize))
+    .catch(err => console.log('error while setting users: ' + err));
+}
+
+
+function createUserList(i : number) {
+    let users : User[] = [];
+    let limit = i + batchSize
+    for(let j = i; j < limit; ++j){
+        let user = new User(firstName + j, lastName + j, followername + j, imageUrl);
+        users.push(user);
+    }
+    return users;
+}

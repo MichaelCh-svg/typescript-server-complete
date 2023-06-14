@@ -1,6 +1,6 @@
 import { QueryCommand } from "@aws-sdk/client-dynamodb";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
-import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { getEnvValue } from "../../../util/EnvString";
 
 export class FollowDao{
@@ -66,7 +66,8 @@ export class FollowDao{
               ExclusiveStartKey: {
                 [this.SORT_KEY]: { S: followeeAlias},
                 [this.PRIMARY_KEY]: { S: lastFollowerAlias}
-              }
+              },
+              ScanIndexForward: false
       
             };
             console.log("get followers params other page\n" + JSON.stringify(params));
@@ -82,6 +83,7 @@ export class FollowDao{
               TableName: this.TABLE_NAME,
               IndexName: this.INDEX_NAME,
               Limit: limit, 
+              ScanIndexForward: false
             };
             console.log("get followers params first page\n" + JSON.stringify(params));
       }
@@ -131,7 +133,8 @@ export class FollowDao{
             ExclusiveStartKey: {
                 [this.PRIMARY_KEY]: { S: followerAlias},
                 [this.SORT_KEY]: { S: lastFolloweeAlias}
-            }
+            },
+            ScanIndexForward: false
     
           };
     }
@@ -145,6 +148,7 @@ export class FollowDao{
             ProjectionExpression: this.SORT_KEY,
             TableName: this.TABLE_NAME,
             Limit: limit, 
+            ScanIndexForward: false
           };
     }
     
@@ -177,68 +181,4 @@ export class FollowDao{
       return [items, hasMorePages, lastEvaluatedFollowerAlias];       
   }
   
-  
-  //following functions not used in project, only used for data filling
-  async createFollows(followeeAlias: string, followername: string, numUsers: number){
-      // let aliasList: string[] = Array.from({length: numUsers}, (_, i) => followername + (i+1));
-      
-      let batchSize = 10;
-      // console.log(aliasList.length);
-      // console.log(aliasList.splice(2700, 100));
-      // let aliasList = createArray(followername, 0, numUsers);
-          // let list = aliasList.splice(i, batchSize);
-          // console.log('list \n' + aliasList);
-      for(let i = 0; i < numUsers; i+=batchSize){
-          let aliasList = this.createArray(followername, i, batchSize);
-          let list = aliasList;
-          if(i > 1300){
-              console.log('i ' + i);
-              console.log('list \n' + list);
-          }
-          // let l = list.length;
-          // console.log('number write items: ' + l)
-          await this.createFollowsInBatches(followeeAlias, list);
-          // execSync('sleep 0.1');
-          // console.log( (i+batchSize) + ' followers created.')
-      }
-  }
-  private createArray(followerName: string, start: number, batchSize: number){
-      let aliasList = new Array<string>(batchSize);
-      for(let i = 0; i < batchSize; ++i){
-          aliasList[i] = followerName + (start+i+1);
-      }
-      return aliasList;
-  }
-  private async createFollowsInBatches(followeeAlias: string, followerAliasList: string[]){
-      let length = followerAliasList.length;
-      if(length == 0){
-          console.log('zero followers to batch write');
-          return true;
-      }
-      else{
-          const params = {
-              RequestItems: {
-                [this.TABLE_NAME]: this.createPutFollowRequestBatch(followeeAlias, followerAliasList)
-              }
-            }
-  
-      await ddbDocClient.send(new BatchWriteCommand(params))
-      return true;
-      }
-  }
-  private createPutFollowRequestBatch(followeeAlias: string, followerAliasList: string[]){
-      return followerAliasList.map(followerAlias => this.createPutFollowRequest(followerAlias, followeeAlias));
-  }
-  private createPutFollowRequest(followerAlias: string, followeeAlias: string){
-      let item = {
-          [this.PRIMARY_KEY]: followerAlias,
-          [this.SORT_KEY]: followeeAlias,
-      }
-      let request = {
-          PutRequest: {
-              Item: item
-          }
-      }
-      return request;
-  }
 }
