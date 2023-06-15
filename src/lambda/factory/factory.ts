@@ -9,6 +9,6 @@ let factory: IDaoFactory;
 factory = new DynamoFactory();
 // factory = new FakeFactory();
 
-export function getFollowService(): FollowService{ return new FollowService(factory)}
-export function getUserService(): UserService{ return new UserService(factory)}
-export function getStatusService(): StatusService{ return new StatusService(factory)}
+export function getFollowService(): FollowService { return new FollowService(factory)}
+export function getUserService(): UserService { return new UserService(factory)}
+export function getStatusService(): StatusService { return new StatusService(factory)}

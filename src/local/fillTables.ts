@@ -6,6 +6,7 @@ import { UserDaoFillTable } from "./UserDaoFillTable";
 //This code assumes that you have already created a user with the mainUserName. 
 // Since async and await don't work here, I try using execsync to prevent throttling of the dynamodb tables.
 // Throttling causes items to not be written.
+// Make sure to increase the write capacities for the follow and user tables. You may need to increase the write capacity on the follow index as well.
 
 let mainUserName = "@cat";
 let followername = "@serpent";

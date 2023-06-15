@@ -1,8 +1,10 @@
-import { StatusListRequest } from "../model/dao/net/request/StatusListRequest";
+import { StoryFeedRequest } from "../model/dao/net/Request";
 import { getStatusService } from "./factory/factory";
 
 
-export const handler = async(event: StatusListRequest) => {
+export const handler = async(event: StoryFeedRequest) => {
     // TODO implement
-    return getStatusService().getStory(event);
+    let deseralizedRequest = StoryFeedRequest.fromJson(event);
+    console.log('get story handler deserialized storyfeed request ' + JSON.stringify(deseralizedRequest));
+    return getStatusService().getStory(deseralizedRequest);
 };

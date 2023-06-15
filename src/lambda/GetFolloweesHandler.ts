@@ -1,9 +1,10 @@
+import { FollowListRequest } from "../model/dao/net/Request";
 import { getFollowService } from "./factory/factory";
-import { FollowingRequest } from "../model/dao/net/request/FollowingRequest";
 
 
 
-export const handler = async(event: FollowingRequest) => {
+export const handler = async(event: FollowListRequest) => {
     // TODO implement
-    return getFollowService().getFollowees(event);
+    let deseralizedRequest = FollowListRequest.fromJson(event);
+    return getFollowService().getFollowees(deseralizedRequest);
 };

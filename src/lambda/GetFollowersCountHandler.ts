@@ -1,8 +1,9 @@
+import { AuthorizedRequest } from "../model/dao/net/Request";
 import { getFollowService } from "./factory/factory";
-import { FollowerFollowingCountRequest } from "../model/dao/net/request/FollowerFollowingCountRequest";
 
 
-export const handler = async(event: FollowerFollowingCountRequest) => {
+export const handler = async(event: AuthorizedRequest) => {
     // TODO implement
-    return getFollowService().getFollowersCount(event);
+    let deseralizedRequest = AuthorizedRequest.fromJson(event);
+    return getFollowService().getFollowersCount(deseralizedRequest);
 };

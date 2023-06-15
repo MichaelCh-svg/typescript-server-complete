@@ -3,11 +3,10 @@ import { SQSClient, SendMessageCommand } from  "@aws-sdk/client-sqs";
 import * as dotenv from 'dotenv'
 import { PostStatusToSQSRequest } from "./PostStatusToSQSRequest";
 import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
-import { PostStatusRequest } from "../net/request/PostStatusRequest";
-import { Response } from "../net/response/Response";
 import { StoryDao } from "./StoryDao";
-import { FeedDao } from "./FeedDao";
 import { FeedDaoFace } from "./FeedDaoFace";
+import { PostStatusRequest } from "../net/Request";
+import { Response } from "../net/Response";
 dotenv.config()
 
 let sqsClient = new SQSClient({ region: process.env.REGION })
@@ -17,7 +16,7 @@ let sqsClient = new SQSClient({ region: process.env.REGION })
 export async function postStatusToSQSFromSQSService(event: PostStatusRequest) {
     // Set the parameters
   let timestamp = new Date().getTime();
-  let request = new PostStatusToSQSRequest(event.alias, event.post, timestamp);
+  let request = new PostStatusToSQSRequest(event.user.alias, event.post, timestamp);
   const params = {
     DelaySeconds: 10,
     MessageBody:
@@ -56,7 +55,7 @@ try {
 
 export async function postStatusToSQS(event: PostStatusRequest){
   await postStatusToSQSFromSQSService(event);
-  return new Response(true, event.alias + " posted " + event.post);
+  return new Response(true, event.user.alias + " posted " + event.post);
 }
 export async function postStatusFromSQSService(event: PostStatusToSQSRequest){
   let storyDao = new StoryDao();

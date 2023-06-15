@@ -4,12 +4,14 @@ import { DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { getEnvValue } from "../../../util/EnvString";
 
 export class FollowDao{
+
   private TABLE_NAME = getEnvValue('FOLLOW_TABLE_NAME');
   private INDEX_NAME = getEnvValue('FOLLOW_INDEX_NAME');
   private PRIMARY_KEY = getEnvValue('FOLLOW_PRIMARY_KEY');
   private SORT_KEY = getEnvValue('FOLLOW_SORT_KEY');
 
   async isFollowing (followerAlias: string, followeeAlias: string) {
+    console.log('follow dao follower ' + followerAlias + ' and followee ' + followeeAlias);
     const params = {
         TableName: this.TABLE_NAME,
         Key: {

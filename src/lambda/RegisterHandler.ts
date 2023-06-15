@@ -1,4 +1,4 @@
-import { RegisterRequest } from "../model/dao/net/request/RegisterRequest";
+import { RegisterRequest } from "../model/dao/net/Request";
 import { getUserService } from "./factory/factory";
 
 
