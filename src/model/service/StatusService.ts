@@ -19,7 +19,7 @@ export class StatusService{
     
     async getStory(event: StoryFeedRequest){
     
-        let [statusList, hasMorePages] = await this.storyDao.getStatusList(event);
+        let [statusList, hasMorePages] = await this.storyDao.getStoryList(event);
         return new StoryFeedResponse(true, hasMorePages, statusList, 'story');
     }
     

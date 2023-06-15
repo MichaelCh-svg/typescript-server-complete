@@ -39,7 +39,7 @@ export class FollowService{
         } else if(event.limit <= 0) {
             throw new Error("[Bad Request] Request needs to have a positive limit");
         }
-        let [users, hasMorePages] = await this.followDao.getDAOFollowees(event.user.alias, event.limit, event.lastFollowUser == null ? null : event.lastFollowUser.alias);
+        let [users, hasMorePages] = await this.followDao.getFollowees(event.user.alias, event.limit, event.lastFollowUser == null ? null : event.lastFollowUser.alias);
         return new FollowListResponse(true, hasMorePages, users);
     }
     async getFollowers(event: FollowListRequest){
@@ -49,7 +49,7 @@ export class FollowService{
         } else if(event.limit <= 0) {
             throw new Error("[Bad Request] Request needs to have a positive limit");
         }
-        let [users, hasMorePages] = await this.followDao.getDAOFollowers(event.user.alias, event.limit, event.lastFollowUser == null ? null : event.lastFollowUser.alias);
+        let [users, hasMorePages] = await this.followDao.getFollowers(event.user.alias, event.limit, event.lastFollowUser == null ? null : event.lastFollowUser.alias);
   
         return new FollowListResponse(true, hasMorePages, users) ;
     }

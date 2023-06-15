@@ -20,17 +20,17 @@ export class UserDaoFake implements IUserDao{
         user.imageUrl = this.MALE_IMAGE_URL;
         return user;
     }
-    async decrementFollowersCount(username: string): Promise<boolean> {
-        return true;
+    async decrementFollowersCount(username: string): Promise<void> {
+        return;
     }
-    async decrementFollowingCount(username: string): Promise<boolean> {
-        return true;
+    async decrementFollowingCount(username: string): Promise<void> {
+        return;
     }
-    async incrementFollowersCount(username: string): Promise<boolean> {
-        return true;
+    async incrementFollowersCount(username: string): Promise<void> {
+        return;
     }
-    async incrementFollowingCount(username: string): Promise<boolean> {
-        return true;
+    async incrementFollowingCount(username: string): Promise<void> {
+        return;
     }
     async getUserFollowingCount(username: string): Promise<number> {
         let user = this.fakeData.findUserByAlias(username);

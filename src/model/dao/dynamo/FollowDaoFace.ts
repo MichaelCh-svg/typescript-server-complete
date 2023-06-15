@@ -16,7 +16,7 @@ export class FollowDaoFace implements IFollowDao{
     putFollow(alias: string, aliasToFollow: string): Promise<void> {
         return this.followDao.putFollow(alias, aliasToFollow);
     }
-    async getDAOFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[User[], boolean]> {
+    async getFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[User[], boolean]> {
         let [followers, hasMorePages] = await this.followDao.getDAOFollowersAliases(followeeAlias, limit, lastFollowerAlias);
         console.log(followers.length + " followers\n" + JSON.stringify(followers));
         let users = await this.userDao.getUsersFromAliases(followers);
@@ -30,7 +30,7 @@ export class FollowDaoFace implements IFollowDao{
         });
         return [sortedUsers, hasMorePages];
     }
-    async getDAOFollowees(followerAlias: string, limit: number, lastFolloweeAlias: string | null): Promise<[User[], boolean]> {
+    async getFollowees(followerAlias: string, limit: number, lastFolloweeAlias: string | null): Promise<[User[], boolean]> {
         let [followers, hasMorePages] = await this.followDao.getDAOFolloweesAliases(followerAlias, limit, lastFolloweeAlias);
         let users = await this.userDao.getUsersFromAliases(followers);
         //The users have to be in the same order that the followerAliaslist was in, otherwise the pagination for getFollowerAlias

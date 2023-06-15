@@ -19,16 +19,16 @@ export class UserDaoFace implements IUserDao{
         await this.userDao.putUser(user, hashedPassword);
         return user;
     }
-    decrementFollowersCount(username: string): Promise<boolean> {
+    decrementFollowersCount(username: string): Promise<void> {
         return this.userDao.decrementFollowersCount(username);
     }
-    decrementFollowingCount(username: string): Promise<boolean> {
+    decrementFollowingCount(username: string): Promise<void> {
         return this.userDao.decrementFollowingCount(username);
     }
-    incrementFollowersCount(username: string): Promise<boolean> {
+    incrementFollowersCount(username: string): Promise<void> {
         return this.userDao.incrementFollowersCount(username);
     }
-    incrementFollowingCount(username: string): Promise<boolean> {
+    incrementFollowingCount(username: string): Promise<void> {
         return this.userDao.incrementFollowingCount(username);
     }
     

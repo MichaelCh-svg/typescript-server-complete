@@ -6,7 +6,7 @@ import { StoryDao } from "./StoryDao";
 
 export class StoryDaoFace implements IStoryDao{
     private storyDao = new StoryDao();
-    async getStatusList(request: StoryFeedRequest): Promise<[Status[], boolean]> {
+    async getStoryList(request: StoryFeedRequest): Promise<[Status[], boolean]> {
         let [statusList, hasMorePages] = await this.storyDao.getStatusList(request.user, request.limit, request.lastStatus);
         return[statusList, hasMorePages];
     }

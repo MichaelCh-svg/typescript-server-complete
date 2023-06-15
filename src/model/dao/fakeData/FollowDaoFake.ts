@@ -15,7 +15,7 @@ export class FollowDaoFake implements IFollowDao {
     async putFollow(alias: string, aliasToFollow: string): Promise<void> {
         return;
     }
-    async getDAOFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[User[], boolean]> {
+    async getFollowers(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[User[], boolean]> {
         let allFollowees = this.fakeData.fakeUsers;
 
         let followeesIndex = lastFollowerAlias == null ? 0 : allFollowees.findIndex(user => user.alias === lastFollowerAlias);
@@ -30,7 +30,7 @@ export class FollowDaoFake implements IFollowDao {
         let hasMorePages = remainingFolloweesCount > limit;
         return [responseFollowees, hasMorePages];
     }
-    async getDAOFollowees(followerAlias: string, limit: number, lastFolloweeAlias: string | null): Promise<[User[], boolean]> {
+    async getFollowees(followerAlias: string, limit: number, lastFolloweeAlias: string | null): Promise<[User[], boolean]> {
         let allFollowees = this.fakeData.fakeUsers;
 
         let followeesIndex = lastFolloweeAlias == null ? 0 : allFollowees.findIndex(user => user.alias === lastFolloweeAlias);

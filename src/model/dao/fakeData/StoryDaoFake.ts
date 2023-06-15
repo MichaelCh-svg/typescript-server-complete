@@ -7,7 +7,7 @@ export class StoryDaoFake implements IStoryDao {
 
     private fakeData = FakeData.instance;
     
-    async getStatusList(request: StoryFeedRequest): Promise<[Status[], boolean]> {
+    async getStoryList(request: StoryFeedRequest): Promise<[Status[], boolean]> {
         let allStatuses = this.fakeData.fakeStatuses;
 
         let statusIndex = request.lastStatus == null ? 0 : allStatuses.findIndex(status => status.user.alias == request.lastStatus?.user.alias && status.timestamp == request.lastStatus.timestamp);

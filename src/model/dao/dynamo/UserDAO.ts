@@ -25,7 +25,7 @@ export class UserDao {
       UpdateExpression: "SET " + FOLLOWERS_COUNT + " = " + FOLLOWERS_COUNT + ' - :dec'
     };
     return await ddbDocClient.send(new UpdateCommand(params)).then(data => {
-        return true});
+        return;});
   }
   async decrementFollowingCount(alias: string){
     const params = {
@@ -35,7 +35,7 @@ export class UserDao {
       UpdateExpression: "SET " + FOLLOWING_COUNT + " = " + FOLLOWING_COUNT + ' - :dec'
     };
     return await ddbDocClient.send(new UpdateCommand(params)).then(data => {
-        return true});
+        return;});
   }
   async incrementFollowersCount(alias: string){
     const params = {
@@ -45,7 +45,7 @@ export class UserDao {
       UpdateExpression: "SET " + FOLLOWERS_COUNT + " = " + FOLLOWERS_COUNT + ' + :inc'
     };
     return await ddbDocClient.send(new UpdateCommand(params)).then(data => {
-        return true});
+        return;});
   }
   async incrementFollowingCount(alias: string){
     const params = {
@@ -55,7 +55,7 @@ export class UserDao {
       UpdateExpression: "SET " + FOLLOWING_COUNT + " = " + FOLLOWING_COUNT + ' + :inc'
     };
     return await ddbDocClient.send(new UpdateCommand(params)).then(data => {
-        return true});
+        return;});
   }
   
   async getUser (username: string) : Promise<User>{
