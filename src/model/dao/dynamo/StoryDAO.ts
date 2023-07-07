@@ -18,13 +18,13 @@ export class StoryDao{
             KeyConditionExpression: this.PRIMARY_KEY + " = :s",
             // FilterExpression: "contains (Subtitle, :topic)",
             ExpressionAttributeValues: {
-              ":s": { S:  authorUser.alias}
+              ":s": authorUser.alias
             },
             TableName: this.TABLE_NAME,
             Limit: limit,
             ExclusiveStartKey: {
-                [this.PRIMARY_KEY]: { S: lastStatus.user.alias},
-                [this.SORT_KEY]: { N: lastStatus.timestamp}
+                [this.PRIMARY_KEY]: lastStatus.user.alias,
+                [this.SORT_KEY]: lastStatus.timestamp
             },
             ScanIndexForward: false
     
@@ -59,8 +59,9 @@ export class StoryDao{
                 if(items.length == 0) hasMorePages = false;
                 if(data.LastEvaluatedKey == undefined){
                   hasMorePages = false
-              }
-            });
+                }
+                else console.log(data.LastEvaluatedKey);
+              });
         }
         catch (err) {
             throw err;

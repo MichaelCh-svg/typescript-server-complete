@@ -3,6 +3,7 @@ import { ddbClient, ddbDocClient } from "./ClientDynamo";
 import { Status } from "../../domain/Status";
 import { User } from "../../domain/User";
 import { getEnvValue } from "../../../util/EnvString";
+import { TooManyEntriesInBatchRequest } from "@aws-sdk/client-sqs";
 
 
 export class FeedDao {
@@ -20,13 +21,21 @@ export class FeedDao {
                 KeyConditionExpression: this.PRIMARY_KEY + " = :s",
                 // FilterExpression: "contains (Subtitle, :topic)",
                 ExpressionAttributeValues: {
-                ":s": { S:  alias}
+                ":s": alias
                 },
                 TableName: this.TABLE_NAME,
                 Limit: limit,
+                // The format for the exclusive start key is different for the feed than it is for
+                // the Follow, and I'm not sure why. There are hardly any online examples of how to
+                // do an exclusive start key in node. However, someone commented that
+                // the exclusive start key follows the same format as the last evaluated Key so 
+                // if you do a query without a start key and print out the last evaluated Key 
+                // you can get the format
                 ExclusiveStartKey: {
-                    [this.PRIMARY_KEY]: { S: lastStatus.user.alias},
-                    [this.SORT_KEY]: { N: lastStatus.timestamp}
+                    [this.PRIMARY_KEY]: alias,
+                    [this.SORT_KEY]: lastStatus.timestamp,
+                    // [this.AUTHOR_ALIAS]: { S: lastStatus.user.alias },
+                    // [this.POST]: { S: lastStatus.post }
                 },
                 ScanIndexForward: false
         
@@ -34,12 +43,12 @@ export class FeedDao {
         }
         else{
             params =  {
-            KeyConditionExpression: [this.PRIMARY_KEY] + " = :s",
+            KeyConditionExpression: this.PRIMARY_KEY + " = :s",
             ExpressionAttributeValues: {
                 ":s": alias
             },
             TableName: this.TABLE_NAME,
-            Limit: 10,
+            Limit: limit,
             ScanIndexForward: false 
             };
             
@@ -51,7 +60,7 @@ export class FeedDao {
             try {
                 
                 data = await ddbClient.send(new QueryCommand(params)).then(data => {
-                    
+                    console.log('then statement');
                     if(data.Items != undefined && data.Items.length > 0){
                         data.Items.forEach(s => {
                         items.push(new Status(s[this.POST], new User('undefined', 'undefined', s[this.AUTHOR_ALIAS], 'undefined'), s[this.SORT_KEY]))});
@@ -60,6 +69,7 @@ export class FeedDao {
                     if(data.LastEvaluatedKey == undefined){
                         hasMorePages = false;
                     }
+                    else console.log(data.LastEvaluatedKey);
                 });
             }
             catch (err) {

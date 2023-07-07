@@ -57,7 +57,19 @@ export class UserDao {
     return await ddbDocClient.send(new UpdateCommand(params)).then(data => {
         return;});
   }
-  
+  async login (username: string, hashedPassword: String) : Promise<User>{
+    const params = {
+        TableName: TABLE_NAME,
+        Key: {
+            [PRIMARY_KEY]:  username,
+        },
+    };
+    return await ddbDocClient.send(new GetCommand(params)).then(data => {
+      let userData = data.Item;
+      // if(userData === undefined || userData[PASSWORD] != hashedPassword) throw new Error('could not login for ' + username + ', wrong username or password');
+      if(userData === undefined) throw new Error('could not login for ' + username + ', wrong username or password');
+      else return new User(userData[FIRST_NAME], userData[LAST_NAME], userData[PRIMARY_KEY], userData[IMAGE_URL]);
+  })}
   async getUser (username: string) : Promise<User>{
     const params = {
         TableName: TABLE_NAME,

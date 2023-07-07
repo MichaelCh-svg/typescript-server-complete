@@ -6,6 +6,9 @@ import { FollowDaoFake } from "../model/dao/fakeData/FollowDaoFake";
 import { AuthToken } from "../model/domain/AuthToken";
 import { User } from "../model/domain/User";
 import { FakeData } from "../util/FakeData";
+import { Status } from "../model/domain/Status";
+import { FeedDao } from "../model/dao/dynamo/FeedDao";
+import { StoryDao } from "../model/dao/dynamo/StoryDao";
 
 
 /**
@@ -14,10 +17,13 @@ import { FakeData } from "../util/FakeData";
 
 let testAlias = "@colonel1";
 let alias = "@slytherine";
-let user = new User('first', 'last', testAlias, 'imageurl');
-let token = AuthToken.Generate();
-let l = new StoryFeedRequest(user, token, 10, null);
+let user = new User('first', 'last', '@cat3', 'imageurl');
+let status = new Status('knock knock', user, 1688701733232);
+// let status = new Status('post', user, 1688698857518);
 
-let followDao = new FollowDaoFake();
-let service = getFollowService();
+
+let f = new StoryDao();
+f.getStatusList(user, 10, status)
+.then(l => console.log(l))
+;
 

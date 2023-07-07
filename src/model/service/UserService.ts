@@ -27,7 +27,8 @@ export class UserService{
         }
         let user = null;
         try{
-            let user = await this.userDao.login(event.username, event.password);
+            const hashedPassword = SHA256(event.password).toString();
+            let user = await this.userDao.login(event.username, hashedPassword);
             return new AuthenticateResponse(true, user, AuthToken.Generate())
         }
         catch(err){

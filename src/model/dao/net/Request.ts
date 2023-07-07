@@ -169,8 +169,11 @@ export class StoryFeedRequest extends AuthorizedRequest{
         catch(err){
             throw new Error('StatusListRequest error: ' + err);
         }
-
-        let deseralizedRequest = new StoryFeedRequest(authorizedRequest.user, authorizedRequest.token, request.limit, request.lastStatus);
+        let deserializedLastStatus = Status.FromJson(JSON.stringify(request.lastStatus));
+        if(request.lastStatus != null) {
+            console.log('deserialized last status ' + JSON.stringify(deserializedLastStatus));
+        }
+        let deseralizedRequest = new StoryFeedRequest(authorizedRequest.user, authorizedRequest.token, request.limit, deserializedLastStatus);
         return deseralizedRequest;
     }
 }

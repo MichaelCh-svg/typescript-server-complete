@@ -8,6 +8,34 @@ export class Status {
   private _timestamp: number;
   private _segments: PostSegment[];
 
+  public static FromJson(json: string | null | undefined): Status | null {
+    if (!!json) {
+      let jsonObject: {
+        _post: string;
+        _user:  {
+          _firstName: string;
+          _lastName: string;
+          _alias: string;
+          _imageUrl: string;
+        };
+        _timestamp: number;
+        _segments: PostSegment[];
+     } = JSON.parse(json);
+      return new Status(
+        jsonObject._post,
+        new User(
+          jsonObject._user._firstName,
+          jsonObject._user._lastName,
+          jsonObject._user._alias,
+          jsonObject._user._imageUrl
+        ),
+        jsonObject._timestamp
+      );
+    } else {
+      return null;
+    }
+  }
+
   public constructor(post: string, user: User, timestamp: number) {
     this._post = post;
     this._user = user;

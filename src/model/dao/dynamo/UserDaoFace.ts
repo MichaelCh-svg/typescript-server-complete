@@ -5,8 +5,8 @@ import { setS3Image } from "./s3DAO";
 
 export class UserDaoFace implements IUserDao{
     private userDao = new UserDao();
-    async login(username: string, password: string): Promise<User> {
-        return await this.userDao.getUser(username);
+    async login(username: string, hashedPassword: string): Promise<User> {
+        return await this.userDao.login(username, hashedPassword);
     }
     async getUser(username: string): Promise<User> {
         return await this.userDao.getUser(username);

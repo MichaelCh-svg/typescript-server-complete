@@ -51,7 +51,7 @@ do
         # The & runs this command in the background so we can update all lambdas simultaneously 
         # redirecting standard output to /dev/null just means that it doesn't get saved anywhere
         # standard error should still show up in the terminal as it is represented by the number 2 instead of 1
-    echo lambda $i, $lambda, uploading
+    echo lambda $i, $lambda, uploading from s3
     pids[${i-1}]=$!
     ((i=i+1))
 done
