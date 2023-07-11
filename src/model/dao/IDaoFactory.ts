@@ -1,3 +1,4 @@
+import { AuthToken } from "../domain/AuthToken";
 import { Status } from "../domain/Status";
 import { User } from "../domain/User";
 import { StoryFeedRequest, PostStatusRequest } from "./net/Request";
@@ -8,6 +9,7 @@ export interface IDaoFactory{
     getFollowDao(): IFollowDao;
     getFeedDao(): IFeedDao;
     getStoryDao(): IStoryDao;
+    getTokenDao(): ITokenDao;
 }
 
 export interface IUserDao{
@@ -42,4 +44,10 @@ export interface IFeedDao{
 export interface IStoryDao{
     getStoryList(request: StoryFeedRequest): Promise<[Status[], boolean]>;
     putStory(event: PostStatusRequest): Promise<void>;
+}
+
+export interface ITokenDao{
+    getToken(token: string): Promise<AuthToken | null>;
+    updateTokenTimestamp(token: string, timestamp: number): Promise<void>;
+    putToken(token: AuthToken): Promise<void>;
 }

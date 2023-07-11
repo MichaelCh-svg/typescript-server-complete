@@ -6,8 +6,8 @@ import { StatusService } from "../../model/service/StatusService";
 import { FakeFactory } from "../../model/dao/fakeData/FakeFactory";
 
 let factory: IDaoFactory;
-factory = new DynamoFactory();
-// factory = new FakeFactory();
+// factory = new DynamoFactory();
+factory = new FakeFactory();
 
 export function getFollowService(): FollowService { return new FollowService(factory)}
 export function getUserService(): UserService { return new UserService(factory)}

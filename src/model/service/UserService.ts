@@ -4,13 +4,21 @@ import { UserResponse, AuthenticateResponse } from "../dao/net/Response";
 import { AuthToken } from "../domain/AuthToken";
 import { User } from "../domain/User";
 import { SHA256 } from 'crypto-js';
+import { TokenService } from "./TokenService";
 
 export class UserService{
+
     private userDao : IUserDao;
+    private tokenService: TokenService;
+    
     constructor(daoFactory: IDaoFactory){
         this.userDao = daoFactory.getUserDao();
+        this.tokenService = new TokenService(daoFactory);
     }
     async getUserFromService(event: GetUserRequest){
+        
+        this.tokenService.validateToken(event.token);
+
         try{
             let user = await this.userDao.getUser(event.usernameToGet);
             return new UserResponse(true, user);
