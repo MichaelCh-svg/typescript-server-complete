@@ -41,7 +41,7 @@ export class AuthorizedRequest{
 
     static fromJson (request: AuthorizedRequest){
         let user = User.FromJson(JSON.stringify(request.user));
-        let token = AuthToken.FromJson(JSON.stringify(request.token));
+        let token = AuthToken.fromJson(JSON.stringify(request.token));
         if(user == null) throw new Error('Authorized Request, could not deserialize user with json:\n' + JSON.stringify(request.user));
         else if(token == null) throw new Error('Authorized Request, could not deserialize token with json:\n' + JSON.stringify(request.token));
         else{

@@ -72,7 +72,7 @@ export class FollowDao{
               ScanIndexForward: false
       
             };
-            console.log("get followers params other page\n" + JSON.stringify(params));
+            // console.log("get followers params other page\n" + JSON.stringify(params));
       }
       else{
           params =  {
@@ -87,7 +87,7 @@ export class FollowDao{
               Limit: limit, 
               ScanIndexForward: false
             };
-            console.log("get followers params first page\n" + JSON.stringify(params));
+            // console.log("get followers params first page\n" + JSON.stringify(params));
       }
       
         let items : string[] = [];

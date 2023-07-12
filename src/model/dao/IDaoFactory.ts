@@ -50,4 +50,6 @@ export interface ITokenDao{
     getToken(token: string): Promise<AuthToken | null>;
     updateTokenTimestamp(token: string, timestamp: number): Promise<void>;
     putToken(token: AuthToken): Promise<void>;
+    deleteToken(token: String): Promise<void>;
+    clearExpiredTokens(expireTimeInMinutes: number): Promise<void>;
 }

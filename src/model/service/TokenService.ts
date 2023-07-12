@@ -4,6 +4,7 @@ import { AuthToken } from "../domain/AuthToken";
 export class TokenService{
 
     private tokenDao: ITokenDao;
+    static timeoutInMinutes = 20;
 
     constructor(daoFactory: IDaoFactory){
         this.tokenDao = daoFactory.getTokenDao();
@@ -13,11 +14,12 @@ export class TokenService{
         let databaseToken = await this.tokenDao.getToken(token.token);
         if(databaseToken == null) throw new Error('token not found in database for token: ' + token.token);
         else {
-            let maxTimeMinutes = 20;
-            let maxTimeMs = maxTimeMinutes * 60 * 100;
-            let timeBetweenMs = 0;
-            // let timeBetweenMs = Date.now() - databaseToken.datetime;
-            if(timeBetweenMs > maxTimeMinutes) throw new Error('token has timed out after: ' + timeBetweenMs / 60 / 100 + ' minutes, with max timeout ' + maxTimeMinutes + '.');
+            let timeBetweenMs = Date.now() - databaseToken.timestamp;
+            let timeBetweenMinutes = timeBetweenMs / 1000 / 60;
+            if(timeBetweenMinutes > TokenService.timeoutInMinutes) {
+                await this.tokenDao.deleteToken(token.token);
+                throw new Error('token has timed out after: ' + timeBetweenMinutes + ' minutes, with max timeout ' + TokenService.timeoutInMinutes + '.');
+            }
             else this.tokenDao.updateTokenTimestamp(token.token, Date.now());
         }
     }

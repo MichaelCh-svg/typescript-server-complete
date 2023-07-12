@@ -1,4 +1,4 @@
-import { IDaoFactory, IUserDao } from "../dao/IDaoFactory";
+import { IDaoFactory, ITokenDao, IUserDao } from "../dao/IDaoFactory";
 import { AuthorizedRequest, GetUserRequest, LoginRequest, RegisterRequest } from "../dao/net/Request";
 import { UserResponse, AuthenticateResponse } from "../dao/net/Response";
 import { AuthToken } from "../domain/AuthToken";
@@ -7,17 +7,23 @@ import { SHA256 } from 'crypto-js';
 import { TokenService } from "./TokenService";
 
 export class UserService{
-
+    
     private userDao : IUserDao;
+    private tokenDao: ITokenDao;
     private tokenService: TokenService;
     
     constructor(daoFactory: IDaoFactory){
         this.userDao = daoFactory.getUserDao();
+        this.tokenDao = daoFactory.getTokenDao();
         this.tokenService = new TokenService(daoFactory);
+    }
+
+    async logout(deseralizedRequest: AuthorizedRequest): Promise<void> {
+        await Promise.all([this.tokenDao.clearExpiredTokens(TokenService.timeoutInMinutes), this.tokenDao.deleteToken(deseralizedRequest.token.token)]);
     }
     async getUserFromService(event: GetUserRequest){
         
-        this.tokenService.validateToken(event.token);
+        await this.tokenService.validateToken(event.token);
 
         try{
             let user = await this.userDao.getUser(event.usernameToGet);
@@ -37,7 +43,9 @@ export class UserService{
         try{
             const hashedPassword = SHA256(event.password).toString();
             let user = await this.userDao.login(event.username, hashedPassword);
-            return new AuthenticateResponse(true, user, AuthToken.Generate())
+            let token = AuthToken.Generate();
+            await this.tokenDao.putToken(token);
+            return new AuthenticateResponse(true, user, token)
         }
         catch(err){
             throw new Error("[Bad Request] " + (err as Error).message);
@@ -52,7 +60,9 @@ export class UserService{
         try{
             const hashedPassword = SHA256(event.password).toString();
             let user = await this.userDao.putUser(new User(event.firstName, event.lastName, event.username, event.imageUrl), hashedPassword);
-            return new AuthenticateResponse(true, user, AuthToken.Generate());
+            let token = AuthToken.Generate();
+            await this.tokenDao.putToken(token);
+            return new AuthenticateResponse(true, user, token);
         }
         catch(err){
             throw new Error("[Bad Request] " + (err as Error).message);

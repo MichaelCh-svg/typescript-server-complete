@@ -42,7 +42,7 @@ export class StoryDao{
         };
         
     }
-      console.log(JSON.stringify(params));
+      // console.log(JSON.stringify(params));
       let items : Status[] = [];
       let hasMorePages = true;
       let data;
