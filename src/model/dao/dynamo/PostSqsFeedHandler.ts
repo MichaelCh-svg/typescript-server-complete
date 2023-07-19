@@ -1,5 +1,4 @@
-import { getStatusService } from "../../../lambda/factory/factory";
-import { FeedDao } from "./FeedDao";
+import { FeedDao } from "./FeedDAO";
 import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
 
 export const handler = async function(event: any){

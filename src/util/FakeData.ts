@@ -1,6 +1,5 @@
-import { User } from "../model/domain/User";
-import { AuthToken } from "../model/domain/AuthToken";
-import { Status } from "../model/domain/Status";
+import { AuthToken, Status, User } from "../model/entities";
+
 
 const MALE_IMAGE_URL: string =
   "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";

@@ -1,4 +1,4 @@
-import { AuthorizedRequest } from "../model/dao/net/Request";
+import { AuthorizedRequest } from "../model/entities";
 import { getFollowService } from "./factory/factory";
 
 

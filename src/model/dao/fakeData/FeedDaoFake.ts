@@ -1,5 +1,5 @@
 import { FakeData } from "../../../util/FakeData";
-import { Status } from "../../domain/Status";
+import { Status } from "../../entities";
 import { IFeedDao } from "../IDaoFactory";
 
 export class FeedDaoFake implements IFeedDao {

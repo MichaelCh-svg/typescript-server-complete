@@ -3,8 +3,8 @@ import { BatchWriteCommand, BatchWriteCommandInput, BatchWriteCommandOutput, Upd
 import { ddbDocClient } from "../model/dao/dynamo/ClientDynamo";
 import { getEnvValue } from "../util/EnvString";
 import { SHA256 } from "crypto-js";
-import { User } from "../model/domain/User";
 import { execSync } from "child_process";
+import { User } from "../model/entities";
 
 
 const TABLE_NAME = getEnvValue('USER_TABLE_NAME');

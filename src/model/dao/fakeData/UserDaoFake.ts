@@ -1,7 +1,7 @@
 import { get } from "jquery";
 import { FakeData } from "../../../util/FakeData";
-import { User } from "../../domain/User";
 import { IUserDao } from "../IDaoFactory";
+import { User } from "../../entities";
 
 export class UserDaoFake implements IUserDao{
     private fakeData = FakeData.instance;

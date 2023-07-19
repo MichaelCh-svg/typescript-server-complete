@@ -1,8 +1,7 @@
-import { Status } from "../../domain/Status";
+import { PostStatusRequest, Status, StoryFeedRequest } from "../../entities";
 import { IStoryDao } from "../IDaoFactory";
-import { StoryFeedRequest, PostStatusRequest } from "../net/Request";
 import { postStatusToSQSFromSQSService } from "./SQSService";
-import { StoryDao } from "./StoryDao";
+import { StoryDao } from "./StoryDAO";
 
 export class StoryDaoFace implements IStoryDao{
     private storyDao = new StoryDao();

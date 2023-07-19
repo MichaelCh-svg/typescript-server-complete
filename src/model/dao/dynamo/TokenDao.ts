@@ -1,8 +1,8 @@
 import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { getEnvValue } from "../../../util/EnvString";
-import { AuthToken } from "../../domain/AuthToken";
 import { ITokenDao } from "../IDaoFactory";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
+import { AuthToken } from "../../entities";
 
 const TABLE_NAME = getEnvValue('TOKEN_TABLE_NAME');
 const PRIMARY_KEY = getEnvValue('TOKEN_PRIMARY_KEY');

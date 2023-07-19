@@ -1,13 +1,11 @@
 // Import required AWS SDK clients and commands for Node.js
 import { SQSClient, SendMessageCommand } from  "@aws-sdk/client-sqs";
-import * as dotenv from 'dotenv'
 import { PostStatusToSQSRequest } from "./PostStatusToSQSRequest";
 import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
-import { StoryDao } from "./StoryDao";
+import { PostStatusRequest, Response } from "../../entities";
 import { FeedDaoFace } from "./FeedDaoFace";
-import { PostStatusRequest } from "../net/Request";
-import { Response } from "../net/Response";
-dotenv.config()
+import { StoryDao } from "./StoryDAO";
+
 
 let sqsClient = new SQSClient({ region: process.env.REGION })
 

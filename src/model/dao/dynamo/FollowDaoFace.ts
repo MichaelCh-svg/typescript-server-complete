@@ -1,7 +1,7 @@
-import { User } from "../../domain/User";
+import { User } from "../../entities";
 import { IFollowDao } from "../IDaoFactory";
 import { FollowDao } from "./FollowDao";
-import { UserDao } from "./UserDao";
+import { UserDao } from "./UserDAO";
 
 
 export class FollowDaoFace implements IFollowDao{

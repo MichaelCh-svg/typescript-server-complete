@@ -1,10 +1,7 @@
 import { IDaoFactory, ITokenDao, IUserDao } from "../dao/IDaoFactory";
-import { AuthorizedRequest, GetUserRequest, LoginRequest, RegisterRequest } from "../dao/net/Request";
-import { UserResponse, AuthenticateResponse } from "../dao/net/Response";
-import { AuthToken } from "../domain/AuthToken";
-import { User } from "../domain/User";
 import { SHA256 } from 'crypto-js';
 import { TokenService } from "./TokenService";
+import { AuthToken, AuthenticateResponse, AuthorizedRequest, GetUserRequest, LoginRequest, RegisterRequest, User, UserResponse } from "../entities";
 
 export class UserService{
     

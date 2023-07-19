@@ -1,9 +1,7 @@
 import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbClient, ddbDocClient } from "./ClientDynamo";
-import { Status } from "../../domain/Status";
-import { User } from "../../domain/User";
 import { getEnvValue } from "../../../util/EnvString";
-import { TooManyEntriesInBatchRequest } from "@aws-sdk/client-sqs";
+import { Status, User } from "../../entities";
 
 
 export class FeedDao {

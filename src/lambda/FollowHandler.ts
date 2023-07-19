@@ -1,4 +1,4 @@
-import { OtherUserRequest } from "../model/dao/net/Request";
+import { OtherUserRequest } from "../model/entities";
 import { getFollowService } from "./factory/factory";
 
 

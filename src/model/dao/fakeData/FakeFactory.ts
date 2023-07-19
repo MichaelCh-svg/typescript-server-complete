@@ -1,5 +1,4 @@
 import { IDaoFactory, IFeedDao, IFollowDao, IStoryDao, ITokenDao, IUserDao } from "../IDaoFactory";
-import { StoryDao } from "../dynamo/StoryDao";
 import { FeedDaoFake } from "./FeedDaoFake";
 import { FollowDaoFake } from "./FollowDaoFake";
 import { StoryDaoFake } from "./StoryDaoFake";

@@ -1,6 +1,6 @@
-import { User } from "../../domain/User";
+import { User } from "../../entities";
 import { IUserDao } from "../IDaoFactory";
-import { UserDao } from "./UserDao";
+import { UserDao } from "./UserDAO";
 import { setS3Image } from "./s3DAO";
 
 export class UserDaoFace implements IUserDao{

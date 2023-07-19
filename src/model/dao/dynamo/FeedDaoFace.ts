@@ -1,10 +1,10 @@
-import { Status } from "../../domain/Status";
+import { Status } from "../../entities";
 import { IFeedDao } from "../IDaoFactory";
-import { FeedDao } from "./FeedDao";
+import { FeedDao } from "./FeedDAO";
 import { FollowDao } from "./FollowDao";
 import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
 import { postFeedToSQSFromSQSService } from "./SQSService";
-import { UserDao } from "./UserDao";
+import { UserDao } from "./UserDAO";
 
 export class FeedDaoFace implements IFeedDao{
     private feedDao = new FeedDao();

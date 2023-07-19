@@ -1,4 +1,4 @@
-import { FollowListRequest } from "../model/dao/net/Request";
+import { FollowListRequest } from "../model/entities";
 import { getFollowService } from "./factory/factory";
 
 

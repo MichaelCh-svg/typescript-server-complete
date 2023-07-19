@@ -1,9 +1,9 @@
 
 import { GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbDocClient } from "./ClientDynamo";
-import { User } from "../../domain/User";
 import { BatchGetItemCommand } from "@aws-sdk/client-dynamodb";
 import { getEnvValue } from "../../../util/EnvString";
+import { User } from "../../entities";
 
 
 const TABLE_NAME = getEnvValue('USER_TABLE_NAME');

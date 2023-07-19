@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
-import { User } from "../model/domain/User";
 import { FollowDaoFillTable } from "./FollowDaoFillTable";
 import { UserDaoFillTable } from "./UserDaoFillTable";
+import { User } from "../model/entities";
 
 //This code assumes that you have already created a user with the mainUserName. 
 // Since async and await don't work here, I try using execsync to prevent throttling of the dynamodb tables.

@@ -1,4 +1,4 @@
-import { PostStatusRequest } from "../model/dao/net/Request";
+import { PostStatusRequest } from "../model/entities";
 import { getStatusService } from "./factory/factory";
 
 

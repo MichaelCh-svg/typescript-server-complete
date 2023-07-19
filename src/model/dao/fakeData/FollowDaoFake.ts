@@ -1,5 +1,5 @@
 import { FakeData } from "../../../util/FakeData";
-import { User } from "../../domain/User";
+import { User } from "../../entities";
 import { IFollowDao } from "../IDaoFactory";
 
 export class FollowDaoFake implements IFollowDao {

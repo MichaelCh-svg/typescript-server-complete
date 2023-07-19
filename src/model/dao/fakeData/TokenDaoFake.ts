@@ -1,4 +1,4 @@
-import { AuthToken } from "../../domain/AuthToken";
+import { AuthToken } from "../../entities";
 import { ITokenDao } from "../IDaoFactory";
 
 export class TokenDaoFake implements ITokenDao{

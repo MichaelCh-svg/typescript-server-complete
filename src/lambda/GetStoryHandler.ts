@@ -1,4 +1,4 @@
-import { StoryFeedRequest } from "../model/dao/net/Request";
+import { StoryFeedRequest } from "../model/entities";
 import { getStatusService } from "./factory/factory";
 
 

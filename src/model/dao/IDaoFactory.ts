@@ -1,7 +1,5 @@
-import { AuthToken } from "../domain/AuthToken";
-import { Status } from "../domain/Status";
-import { User } from "../domain/User";
-import { StoryFeedRequest, PostStatusRequest } from "./net/Request";
+import { AuthToken, PostStatusRequest, Status, StoryFeedRequest, User } from "../entities";
+
 
 
 export interface IDaoFactory{

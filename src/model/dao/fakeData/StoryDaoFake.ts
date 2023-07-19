@@ -1,7 +1,6 @@
 import { FakeData } from "../../../util/FakeData";
-import { Status } from "../../domain/Status";
+import { PostStatusRequest, Status, StoryFeedRequest } from "../../entities";
 import { IStoryDao } from "../IDaoFactory";
-import { StoryFeedRequest, PostStatusRequest } from "../net/Request";
 
 export class StoryDaoFake implements IStoryDao {
 

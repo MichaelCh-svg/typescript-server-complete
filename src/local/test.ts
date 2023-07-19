@@ -1,20 +1,12 @@
-import { handler } from "../lambda/GetFolloweesHandler";
-import { getFollowService } from "../lambda/factory/factory";
-import { FollowListRequest, StoryFeedRequest } from "../model/dao/net/Request";
-import { FollowDaoFace } from "../model/dao/dynamo/FollowDaoFace";
-import { FollowDaoFake } from "../model/dao/fakeData/FollowDaoFake";
-import { AuthToken } from "../model/domain/AuthToken";
-import { User } from "../model/domain/User";
-import { FakeData } from "../util/FakeData";
-import { Status } from "../model/domain/Status";
-import { FeedDao } from "../model/dao/dynamo/FeedDao";
-import { StoryDao } from "../model/dao/dynamo/StoryDao";
 import { TokenDao } from "../model/dao/dynamo/TokenDao";
+import { AuthToken, Status, User } from "../model/entities";
 
 
 /**
  * although async and await is not supported here, you are able to circumvent this using .then statements.
  */
+
+
 
 let testAlias = "@colonel1";
 let alias = "@slytherine";

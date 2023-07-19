@@ -1,7 +1,5 @@
 import { IFeedDao, IDaoFactory, IStoryDao } from "../dao/IDaoFactory";
-import { StoryFeedRequest, PostStatusRequest } from "../dao/net/Request";
-import { StoryFeedResponse, Response } from "../dao/net/Response";
-import { User } from "../domain/User";
+import { PostStatusRequest, Response, StoryFeedRequest, StoryFeedResponse } from "../entities";
 import { TokenService } from "./TokenService";
 
 

@@ -1,5 +1,4 @@
-import { AuthorizedRequest } from "../model/dao/net/Request";
-import { Response } from "../model/dao/net/Response";
+import { AuthorizedRequest, Response } from "../model/entities";
 import { getUserService } from "./factory/factory";
 
 

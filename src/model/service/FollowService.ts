@@ -1,6 +1,5 @@
 import { IDaoFactory, IFollowDao, IUserDao } from "../dao/IDaoFactory";
-import { OtherUserRequest, FollowListRequest, AuthorizedRequest } from "../dao/net/Request";
-import { IsFollowingResponse, FollowCountResponse, Response, FollowListResponse } from "../dao/net/Response";
+import { AuthorizedRequest, FollowCountResponse, FollowListRequest, FollowListResponse, IsFollowingResponse, OtherUserRequest, Response } from "../entities";
 import { TokenService } from "./TokenService";
 
 export class FollowService{

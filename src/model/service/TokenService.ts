@@ -1,5 +1,5 @@
 import { IDaoFactory, ITokenDao } from "../dao/IDaoFactory";
-import { AuthToken } from "../domain/AuthToken";
+import { AuthToken } from "../entities";
 
 export class TokenService{
 
