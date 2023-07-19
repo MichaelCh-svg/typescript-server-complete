@@ -2,6 +2,7 @@ To set up this project with aws, after cloning the project:
 
 1. Publish a module with the entities and request/response objects for this project. This module will be used for both the client and the server. Go to [entities module](https://github.com/MichaelCh-svg/tweeter-entities-chemps-svg) to setup and publish this module.
 2. Install the module into this project. Run 'npm install [module]'.
+3. Change the export on the src/dao/entities.ts file. There is only one line of code in this file.
 1. Run npm i from within the project to install all dependencies.
 2. Create and upload the lambda layers with the node dependencies to each lambda in aws.
     - Follow the instructions at [tweeter lambda layer](https://github.com/MichaelCh-svg/tweeter-lambda-layer)
