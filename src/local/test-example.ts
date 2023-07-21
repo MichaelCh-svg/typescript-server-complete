@@ -1,5 +1,6 @@
 /**
-This file is listed in the .gitignore file. You can edit it without it showing up as a non-committed change.
+Create a test.ts file to run temporary tests without them showing up as non-committed changes.
+The 'src/local/test.ts' file is listed in the .gitignore file.
 
 Here is an example of a local test.
 To run the test, type 'ts-node src/local/test' in the terminal.
