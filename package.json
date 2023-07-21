@@ -29,7 +29,7 @@
     "dotenv": "^16.0.3",
     "jquery": "^3.7.0",
     "moment": "^2.29.4",
-    "test2-entities-chemps-svg": "^0.0.1",
+    "tweeter-entities-chemps-svg": "file:../tweeter-entities-chemps-svg",
     "uuid": "^9.0.0"
   }
 }
