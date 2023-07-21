@@ -1,4 +1,3 @@
-import { get } from "jquery";
 import { FakeData } from "../../../util/FakeData";
 import { IUserDao } from "../IDaoFactory";
 import { User } from "../../entities";

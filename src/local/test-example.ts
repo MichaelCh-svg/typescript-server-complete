@@ -8,8 +8,8 @@ Note that async and await are not supported in the file called by 'ts-node'.
 However, you can still use .then statements to handle the response.
 **/
 
-import { LoginRequest } from "tweeter-entities-chemps-svg";
 import { getUserService } from "../lambda/factory/factory";
+import { LoginRequest } from "../model/entities";
 
 let userAlias = '@colonel';
 let password = 'password';
