@@ -1,6 +1,7 @@
 /**
-Create a test.ts file to run temporary tests without them showing up as non-committed changes.
-The 'src/local/test.ts' file is listed in the .gitignore file.
+Rename this file to 'test.ts'.
+The 'src/local/test.ts' file is listed in the .gitingore file, letting you create temporary tests without github
+tracking them.
 
 Here is an example of a local test.
 To run the test, type 'ts-node src/local/test' in the terminal.
@@ -9,9 +10,12 @@ However, you can still use .then statements to handle the response.
 **/
 
 import { getUserService } from "../lambda/factory/factory";
-import { LoginRequest } from "../model/entities";
+import { AuthenticateResponse, LoginRequest } from "../model/entities";
 
-let userAlias = '@colonel';
-let password = 'password';
+let userAlias = '@cat3';
+let password = 'cat3';
 let loginRequest = new LoginRequest(userAlias, password);
-getUserService().loginFromService(loginRequest).then(resp => console.log(resp));
+getUserService().loginFromService(loginRequest).then(resp  => {
+    let authenticateResponse = resp as AuthenticateResponse;
+    console.log(authenticateResponse)}
+    );

@@ -1,4 +1,3 @@
-If you want a file to write notes in without having to commit the changes to github,
-then add this file to the .gitignore file. For example, I have added 
-'src/local/tempNotes.txt' to .gitignore, so if you create that file you can change it without
-it showing up as a non-committed change.
+Rename this file to 'tempNotes.txt'.
+The The 'src/local/tempNotes.txt' file is listed in the .gitingore file, letting you write temporary notes without github
+tracking them.
