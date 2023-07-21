@@ -6,47 +6,50 @@ import { SHA256 } from "crypto-js";
 import { execSync } from "child_process";
 import { User } from "../model/entities";
 
-
-const TABLE_NAME = getEnvValue('USER_TABLE_NAME');
-const PRIMARY_KEY = getEnvValue('USER_PRIMARY_KEY');
-const FIRST_NAME = getEnvValue('USER_FIRST_NAME');
-const LAST_NAME = getEnvValue('USER_LAST_NAME');
-const PASSWORD = getEnvValue('USER_PASSWORD');
-const IMAGE_URL = getEnvValue('USER_IMAGE_URL');
-const FOLLOWING_COUNT = getEnvValue('USER_FOLLOWING_COUNT');
-const FOLLOWERS_COUNT = getEnvValue('USER_FOLLOWERS_COUNT');
-
 export class UserDaoFillTable {
-  
-  
-    //following functions not used by the application, but for setting up the data
-  
-    async createUsers(userList: User[], password: string){
+
+  private TABLE_NAME = getEnvValue('USER_TABLE_NAME');
+  private PRIMARY_KEY = getEnvValue('USER_PRIMARY_KEY');
+  private FIRST_NAME = getEnvValue('USER_FIRST_NAME');
+  private LAST_NAME = getEnvValue('USER_LAST_NAME');
+  private PASSWORD = getEnvValue('USER_PASSWORD');
+  private IMAGE_URL = getEnvValue('USER_IMAGE_URL');
+  private FOLLOWING_COUNT = getEnvValue('USER_FOLLOWING_COUNT');
+  private FOLLOWERS_COUNT = getEnvValue('USER_FOLLOWERS_COUNT');  
+
+  async createUsers(userList: User[], password: string){
+    if(userList.length == 0){
+      console.log('zero followers to batch write');
+      return;
+    }
+    else{
       const hashedPassword = SHA256(password).toString();
       const params = {
-                    RequestItems: {
-                      [TABLE_NAME]: this.createPutUserRequestBatch(userList, hashedPassword)
-                    }
-                  }
-      let wait = true;
-      await ddbDocClient.send(new BatchWriteCommand(params)).then(async (resp) => {
+        RequestItems: {
+          [this.TABLE_NAME]: this.createPutUserRequestItems(userList, hashedPassword)
+        }
+      }
+      await ddbDocClient.send(new BatchWriteCommand(params))
+      .then(async (resp) => {
         await this.putUnprocessedItems(resp, params);
-        wait = false;
-    });
-    //   while(wait){}
+      })
+      .catch(err => {
+        throw new Error('Error while batchwriting users with params: '+ params + ": \n" + err);
+    });;
+    }
   }
-  createPutUserRequestBatch(userList: User[], hashedPassword: string){
+  private createPutUserRequestItems(userList: User[], hashedPassword: string){
       return userList.map(user => this.createPutUserRequest(user, hashedPassword));
   }
-  createPutUserRequest(user: User, hashedPassword: string){
+  private createPutUserRequest(user: User, hashedPassword: string){
       let item = {
-          [PRIMARY_KEY]: user.alias,
-          [FIRST_NAME]: user.firstName,
-          [LAST_NAME]: user.lastName,
-          [PASSWORD]: hashedPassword,
-          [IMAGE_URL]: user.imageUrl,
-          [FOLLOWERS_COUNT]: 0,
-          [FOLLOWING_COUNT]: 1
+          [this.PRIMARY_KEY]: user.alias,
+          [this.FIRST_NAME]: user.firstName,
+          [this.LAST_NAME]: user.lastName,
+          [this.PASSWORD]: hashedPassword,
+          [this.IMAGE_URL]: user.imageUrl,
+          [this.FOLLOWERS_COUNT]: 0,
+          [this.FOLLOWING_COUNT]: 1
       }
       let request = {
           PutRequest: {
@@ -59,19 +62,14 @@ export class UserDaoFillTable {
   private async putUnprocessedItems(resp: BatchWriteCommandOutput, params: BatchWriteCommandInput){
     if(resp.UnprocessedItems != undefined){
         let sec = 0.01;
-        let wait;
         while(Object.keys(resp.UnprocessedItems).length > 0) {
             console.log(Object.keys(resp.UnprocessedItems.feed).length + ' unprocessed items');
             //The ts-ignore with an @ in front must be as a comment in order to ignore an error for the next line for compiling. 
             // @ts-ignore 
             params.RequestItems = resp.UnprocessedItems;
-            console.log(params);
             execSync('sleep ' + sec);
             if(sec < 1) sec += 0.1;
-            wait = true;
-            await ddbDocClient.send(new BatchWriteCommand(params)).then(() => wait = false);
-            // while(wait){}
-            console.log('batch wrote the user unprocessed items')
+            await ddbDocClient.send(new BatchWriteCommand(params));
             if(resp.UnprocessedItems == undefined){
                 break;
             }
@@ -80,10 +78,10 @@ export class UserDaoFillTable {
   }
   increaseFollowersCount(alias: string, count: number){
     const params = {
-      TableName: TABLE_NAME,
-      Key: { [PRIMARY_KEY]: alias},
+      TableName: this.TABLE_NAME,
+      Key: { [this.PRIMARY_KEY]: alias},
       ExpressionAttributeValues: { ":inc": count },
-      UpdateExpression: "SET " + FOLLOWERS_COUNT + " = " + FOLLOWERS_COUNT + ' + :inc'
+      UpdateExpression: "SET " + this.FOLLOWERS_COUNT + " = " + this.FOLLOWERS_COUNT + ' + :inc'
     };
     ddbDocClient.send(new UpdateCommand(params)).then(data => {
         return true});

@@ -1,14 +1,10 @@
-import { execSync } from "child_process";
 import { FollowDaoFillTable } from "./FollowDaoFillTable";
 import { UserDaoFillTable } from "./UserDaoFillTable";
 import { User } from "../model/entities";
+ 
+// Make sure to increase the write capacities for the follow table, follow index, and user table. 
 
-//This code assumes that you have already created a user with the mainUserName. 
-// Since async and await don't work here, I try using execsync to prevent throttling of the dynamodb tables.
-// Throttling causes items to not be written.
-// Make sure to increase the write capacities for the follow and user tables. You may need to increase the write capacity on the follow index as well.
-
-let mainUserName = "@cat";
+let mainUsername = "@cat";
 let followername = "@serpent";
 let password = "password";
 let imageUrl = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
@@ -25,7 +21,7 @@ console.log('setting followers');
 setFollowers(0);
 console.log('setting users');
 setUsers(0);
-userDaoFillTable.increaseFollowersCount(mainUserName, numUsers);
+userDaoFillTable.increaseFollowersCount(mainUsername, numUsers);
 
 function setFollowers(i: number){
     if(i >= numUsers) return;
@@ -33,7 +29,7 @@ function setFollowers(i: number){
         console.log(i + ' followers');
     }
     let followList = aliasList.slice(i, i + batchSize);
-    followDaoFillTable.createFollowsInBatches(mainUserName, followList)
+    followDaoFillTable.createFollows(mainUsername, followList)
     .then(()=> setFollowers(i + batchSize))
     .catch(err => console.log('error while setting followers: ' + err));
 }
@@ -43,7 +39,6 @@ function setUsers(i: number){
         console.log(i + ' users');
     }
     let userList = createUserList(i);
-    // console.log(userList);
     userDaoFillTable.createUsers(userList, password)
     .then(()=> setUsers(i + batchSize))
     .catch(err => console.log('error while setting users: ' + err));
