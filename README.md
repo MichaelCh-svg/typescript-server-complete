@@ -5,7 +5,7 @@ To set up this project with aws, after cloning the project:
     - Go to <a href="https://github.com/MichaelCh-svg/tweeter-entities-chemps-svg">entities module</a> to setup and compile this module.
     - ctrl shift click to open the link in a new tab.
 <br><br>
-2. Install the module into this project. Run 'npm install [module folder path]'.
+2. Link the module into this project. Run 'npm link --save [module folder path]'.
 
 1. Run 'npm i' to install the dependencies listed from package.json.
     - note: It is a good idea to run 'npm update' since out of date modules can contain security vulnerabilities. However, updated module versions sometimes break compatibility. I would recommend checking that you can compile the code as is first.
