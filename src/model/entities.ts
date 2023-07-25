@@ -5,4 +5,4 @@ Everywhere else in the project, the entities are imported from this file.
  
  */
 
-export * from "[TODO: Entities module name]";
+export * from "tweeter-entities";
