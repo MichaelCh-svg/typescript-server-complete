@@ -3,4 +3,5 @@ node_modules/
 .env
 src/local/tempNotes.txt
 src/local/test.ts
+src/model/entities.ts
 package-lock.json
