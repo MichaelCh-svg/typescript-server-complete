@@ -15,7 +15,7 @@ To set up this project with aws, after cloning the project:
 <br>
 2. Create and upload the lambda layers with the node dependencies to each lambda in aws.
 
-- Follow the instructions at <a href="https://github.com/MichaelCh-svg/tweeter-lambda-layer">tweeter lambda layer</a>.
+- Follow the instructions at [tweeter lambda layer](LAMBDA_LAYER.md).
 <br>
 
 2. Create a .env file using the .env.example template. Edit the .env file to have the correct variable values.
