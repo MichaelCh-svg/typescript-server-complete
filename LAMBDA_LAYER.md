@@ -10,20 +10,20 @@ Follow these steps to setup the lambda layer.
     - note: It is a good idea to run 'npm update' since out of date modules can contain security vulnerabilities. However, updated module versions sometimes break compatibility. It is recommended to get the code running first using the current dependency versions.
 4. The lambda layer has to follow a specific file structure for the lamba to recognize it:
     1. Create a folder called nodejs.
-    - note: nodejs is already listed in the .gitignore file.
+        - note: nodejs is already listed in the .gitignore file.
     2. Copy the node_modules folder into the nodejs folder using the following command: cp -rL [source] [destination]
-    - Copying from file explorer does not copy the contents of the symbolic link. 
+        - Copying from file explorer does not copy the contents of the symbolic link. 
     3. Zip the nodejs folder.
-    - Make sure to zip the nodejs folder itself, and not just the folder's contents.
+        - Make sure to zip the nodejs folder itself, and not just the folder's contents.
 5. Upload the zipped nodejs folder to s3. 
 6. Set up the lambda layer in aws.
     1. Navigate to the lambda layer.
-        1. Open up the aws lambda service.
-        2. Lambda layer will be one of the options on the left panel.
+        - Open up the aws lambda service.
+        - Lambda layer will be one of the options on the left panel.
     2. Click create layer and setup the layer.
-        1. Set the compatible runtime to Node.js 18.x. Otherwise, the layer will not be accessible from the lambda.
-        2. Set the code from the s3 bucket as the lambda layer's code.
+        - Set the compatible runtime to Node.js 18.x. Otherwise, the layer will not be accessible from the lambda.
+        - Set the code from the s3 bucket as the lambda layer's code.
 7. Add the lambda layer to each lambda as a custom lambda layer.
-- There is a script, updateLambdaLayers.sh, that will update all of the lambdas's lambda layers. To run this script:
-    - Set the environment variables for LAMDALAYER_ARN, and for the list of lambdas. 
-    - Run the script using ./updateLambdaLayers.sh.
+    - There is a script, updateLambdaLayers.sh, that will update all of the lambdas' lambda layers. To run this script:
+        - Set the environment variables for LAMDALAYER_ARN, and for the list of lambdas. 
+        - Run the script using ./updateLambdaLayers.sh.
