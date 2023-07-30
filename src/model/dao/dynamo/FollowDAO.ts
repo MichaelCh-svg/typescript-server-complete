@@ -54,7 +54,7 @@ export class FollowDao{
     };
   async getDAOFollowersAliases(followeeAlias: string, limit: number, lastFollowerAlias: string | null): Promise<[string[], boolean, string | null]> {
       let params;
-      if(lastFollowerAlias != undefined){
+      if(lastFollowerAlias != undefined && lastFollowerAlias != null){
           params =  {
               KeyConditionExpression: this.SORT_KEY + " = :s",
               // FilterExpression: "contains (Subtitle, :topic)",
@@ -122,7 +122,7 @@ export class FollowDao{
   
   async getDAOFolloweesAliases(followerAlias: string, limit: number, lastFolloweeAlias: string | null): Promise<[string[], boolean, string | null]> {
     let params;
-    if(lastFolloweeAlias != undefined){
+    if(lastFolloweeAlias != undefined && lastFolloweeAlias != null){
         params =  {
             KeyConditionExpression: this.PRIMARY_KEY + " = :s",
             // FilterExpression: "contains (Subtitle, :topic)",

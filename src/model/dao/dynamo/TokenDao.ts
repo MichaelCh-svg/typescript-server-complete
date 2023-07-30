@@ -7,6 +7,7 @@ import { AuthToken } from "../../entities";
 const TABLE_NAME = getEnvValue('TOKEN_TABLE_NAME');
 const PRIMARY_KEY = getEnvValue('TOKEN_PRIMARY_KEY');
 const TIMESTAMP = getEnvValue('TOKEN_TIMESTAMP');
+const USERNAME = getEnvValue('TOKEN_USERNAME');
 
 
 export class TokenDao implements ITokenDao{
@@ -88,7 +89,7 @@ export class TokenDao implements ITokenDao{
       let tokens: string[] = resp.Items == undefined ? [] : resp.Items.map(item => item[PRIMARY_KEY] as string);
       return tokens;
     }
-    async getToken(token: string): Promise<AuthToken | null> {
+    async getToken(token: string): Promise<[AuthToken, string] | null> {
         const params = {
             TableName: TABLE_NAME,
             Key: {
@@ -98,7 +99,7 @@ export class TokenDao implements ITokenDao{
         // console.log('get token params ' + JSON.stringify(params));
         return await ddbDocClient.send(new GetCommand(params)).then(data => {
           if(data.Item === undefined) return null;
-          else return new AuthToken(data.Item[PRIMARY_KEY], data.Item[TIMESTAMP]); });
+          else return [new AuthToken(data.Item[PRIMARY_KEY], data.Item[TIMESTAMP]), data.Item[USERNAME]]; });
     }
     async updateTokenTimestamp(token: string, timestamp: number): Promise<void> {
         const params = {
@@ -119,12 +120,13 @@ export class TokenDao implements ITokenDao{
           return await ddbDocClient.send(new UpdateCommand(params)).then(data => {
               return;});
     }
-    async putToken(token: AuthToken): Promise<void> {
+    async putToken(token: AuthToken, username: string): Promise<void> {
         const params = {
             TableName: TABLE_NAME,
             Item: {
               [PRIMARY_KEY]: token.token, //e.g. title: "Rush"
               [TIMESTAMP]: token.timestamp, // e.g. year: "2013"
+              [USERNAME]: username
             },
           };
           try {

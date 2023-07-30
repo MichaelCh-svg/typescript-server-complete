@@ -40,14 +40,14 @@ export interface IFeedDao{
 }
 
 export interface IStoryDao{
-    getStoryList(request: StoryFeedRequest): Promise<[Status[], boolean]>;
-    putStory(event: PostStatusRequest): Promise<void>;
+    getStoryList(request: StoryFeedRequest, username: string): Promise<[Status[], boolean]>;
+    putStory(event: PostStatusRequest, username: string): Promise<void>;
 }
 
 export interface ITokenDao{
-    getToken(token: string): Promise<AuthToken | null>;
+    getToken(token: string): Promise<[AuthToken, string] | null>;
     updateTokenTimestamp(token: string, timestamp: number): Promise<void>;
-    putToken(token: AuthToken): Promise<void>;
+    putToken(token: AuthToken, username: string): Promise<void>;
     deleteToken(token: String): Promise<void>;
     clearExpiredTokens(expireTimeInMinutes: number): Promise<void>;
 }

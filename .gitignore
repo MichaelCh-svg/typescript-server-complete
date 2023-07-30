@@ -1,5 +1,7 @@
 build/
 node_modules/
+nodejs/
+*.zip
 .env
 src/local/tempNotes.txt
 src/local/test.ts

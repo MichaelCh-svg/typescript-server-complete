@@ -2,19 +2,20 @@
 import { SQSClient, SendMessageCommand } from  "@aws-sdk/client-sqs";
 import { PostStatusToSQSRequest } from "./PostStatusToSQSRequest";
 import { PostFeedToSQSRequest } from "./PostFeedToSQSRequest";
-import { PostStatusRequest, Response } from "../../entities";
+import { PostStatusRequest, TweeterResponse } from "../../entities";
 import { FeedDaoFace } from "./FeedDaoFace";
 import { StoryDao } from "./StoryDAO";
+import { TokenService } from "../../service/TokenService";
 
 
 let sqsClient = new SQSClient({ region: process.env.REGION })
 
 
 
-export async function postStatusToSQSFromSQSService(event: PostStatusRequest) {
+export async function postStatusToSQSFromSQSService(event: PostStatusRequest, username: string) {
     // Set the parameters
   let timestamp = new Date().getTime();
-  let request = new PostStatusToSQSRequest(event.user.alias, event.post, timestamp);
+  let request = new PostStatusToSQSRequest(username, event.post, timestamp);
   const params = {
     DelaySeconds: 10,
     MessageBody:
@@ -51,9 +52,9 @@ try {
 }
 };
 
-export async function postStatusToSQS(event: PostStatusRequest){
-  await postStatusToSQSFromSQSService(event);
-  return new Response(true, event.user.alias + " posted " + event.post);
+export async function postStatusToSQS(event: PostStatusRequest, username: string){
+  await postStatusToSQSFromSQSService(event, username);
+  return new TweeterResponse(true, "posted " + event.post);
 }
 export async function postStatusFromSQSService(event: PostStatusToSQSRequest){
   let storyDao = new StoryDao();
@@ -61,6 +62,6 @@ export async function postStatusFromSQSService(event: PostStatusToSQSRequest){
   await storyDao.putStory(event.alias, event.timestamp, event.post);
   await feedDao.putFeeds(event.alias, event.post, event.timestamp);
 
-  return new Response(true, event.alias + " posted " + event.post + " at " + event.timestamp);
+  return new TweeterResponse(true, event.alias + " posted " + event.post + " at " + event.timestamp);
 }
 

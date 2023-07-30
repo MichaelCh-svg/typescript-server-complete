@@ -12,7 +12,7 @@ export class StoryDao{
   private POST = getEnvValue('STORY_POST');
   async getStatusList(authorUser: User, limit: number, lastStatus: Status | null): Promise<[Status[], boolean]> {
     let params;
-    if(lastStatus != undefined){
+    if(lastStatus != undefined && lastStatus != null){
         params =  {
             KeyConditionExpression: this.PRIMARY_KEY + " = :s",
             // FilterExpression: "contains (Subtitle, :topic)",

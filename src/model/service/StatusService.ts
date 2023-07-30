@@ -1,5 +1,5 @@
 import { IFeedDao, IDaoFactory, IStoryDao } from "../dao/IDaoFactory";
-import { PostStatusRequest, Response, StoryFeedRequest, StoryFeedResponse } from "../entities";
+import { PostStatusRequest, TweeterResponse, StoryFeedRequest, StoryFeedResponse } from "../entities";
 import { TokenService } from "./TokenService";
 
 
@@ -16,9 +16,9 @@ export class StatusService{
     }
     async getFeed(event: StoryFeedRequest){
 
-        await this.tokenService.validateToken(event.token);
+        let username = await this.tokenService.validateToken(event.token);
 
-        let [statusList, hasMorePages] = await this.feedDao.getFeedList(event.user.alias, event.lastStatus, event.limit);
+        let [statusList, hasMorePages] = await this.feedDao.getFeedList(username, event.lastItem, event.limit);
         return new StoryFeedResponse(true, hasMorePages, statusList, 'feed');
     }
     
@@ -26,16 +26,16 @@ export class StatusService{
     
         await this.tokenService.validateToken(event.token);
 
-        let [statusList, hasMorePages] = await this.storyDao.getStoryList(event);
+        let [statusList, hasMorePages] = await this.storyDao.getStoryList(event, event.username);
         return new StoryFeedResponse(true, hasMorePages, statusList, 'story');
     }
     
    
     async postStatus(event: PostStatusRequest){
         
-        await this.tokenService.validateToken(event.token);
+        let username = await this.tokenService.validateToken(event.token);
         
-        await this.storyDao.putStory(event);
-        return new Response(true, event.user.alias + " posted " + event.post);
+        await this.storyDao.putStory(event, username);
+        return new TweeterResponse(true, username + " posted " + event.post);
     }
 }

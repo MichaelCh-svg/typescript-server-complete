@@ -1,9 +1,9 @@
-import { AuthorizedRequest } from "../model/entities";
+import { OtherUserRequest } from "../model/entities";
 import { getFollowService } from "./factory/factory";
 
 
-export const handler = async(event: AuthorizedRequest) => {
+export const handler = async(event: OtherUserRequest) => {
     // TODO implement
-    let deseralizedRequest = AuthorizedRequest.fromJson(event);
+    let deseralizedRequest = OtherUserRequest.fromJson(event);
     return getFollowService().getFollowersCount(deseralizedRequest);
 };

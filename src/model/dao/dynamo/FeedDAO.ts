@@ -14,7 +14,7 @@ export class FeedDao {
 
     async getFeedStatusListWithoutUsers(alias: string, lastStatus: Status | null, limit: number): Promise<[Status[], boolean]> {
         let params;
-        if(lastStatus != undefined){
+        if(lastStatus != undefined && lastStatus != null){
             params =  {
                 KeyConditionExpression: this.PRIMARY_KEY + " = :s",
                 // FilterExpression: "contains (Subtitle, :topic)",

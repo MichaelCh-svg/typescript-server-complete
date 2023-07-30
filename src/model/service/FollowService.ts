@@ -1,5 +1,5 @@
 import { IDaoFactory, IFollowDao, IUserDao } from "../dao/IDaoFactory";
-import { AuthorizedRequest, FollowCountResponse, FollowListRequest, FollowListResponse, IsFollowingResponse, OtherUserRequest, Response } from "../entities";
+import { FollowCountResponse, FollowListRequest, FollowListResponse, IsFollowingResponse, OtherUserRequest, TweeterResponse } from "../entities";
 import { TokenService } from "./TokenService";
 
 export class FollowService{
@@ -15,61 +15,61 @@ export class FollowService{
     }
 
     async isFollowingFromService(event: OtherUserRequest){
-        await this.tokenService.validateToken(event.token);
+        let username = await this.tokenService.validateToken(event.token);
 
-        let following = await this.followDao.isFollowing(event.user.alias, event.otherUser.alias);
+        let following = await this.followDao.isFollowing(username, event.username);
         return new IsFollowingResponse(true, following);
     }
-    async getFollowersCount(event: AuthorizedRequest){
+    async getFollowersCount(event: OtherUserRequest){
 
         await this.tokenService.validateToken(event.token);
 
-        let count = await this.userDao.getUserFollowersCount(event.user.alias);
+        let count = await this.userDao.getUserFollowersCount(event.username);
         return new FollowCountResponse(true, count);
     }
-    async getFollowingCount(event: AuthorizedRequest){
+    async getFollowingCount(event: OtherUserRequest){
 
         await this.tokenService.validateToken(event.token);
 
-        let count = await this.userDao.getUserFollowingCount(event.user.alias);
+        let count = await this.userDao.getUserFollowingCount(event.username);
         return new FollowCountResponse(true, count);
     }
     async unfollow(event: OtherUserRequest){
 
-        await this.tokenService.validateToken(event.token);
+        let username = await this.tokenService.validateToken(event.token);
 
-        await Promise.all([this.followDao.deleteFollow(event.user.alias, event.otherUser.alias), this.userDao.decrementFollowersCount(event.otherUser.alias), this.userDao.decrementFollowingCount(event.user.alias)]);
-        return new Response(true);
+        await Promise.all([this.followDao.deleteFollow(username, event.username), this.userDao.decrementFollowersCount(event.username), this.userDao.decrementFollowingCount(username)]);
+        return new TweeterResponse(true);
     }
     async follow(event: OtherUserRequest){
 
-        await this.tokenService.validateToken(event.token);
+        let username = await this.tokenService.validateToken(event.token);
 
-        await Promise.all([this.followDao.putFollow(event.user.alias, event.otherUser.alias), this.userDao.incrementFollowersCount(event.otherUser.alias), this.userDao.incrementFollowingCount(event.user.alias)]);
-        return new Response(true);
+        await Promise.all([this.followDao.putFollow(username, event.username), this.userDao.incrementFollowersCount(event.username), this.userDao.incrementFollowingCount(username)]);
+        return new TweeterResponse(true);
     }
     async getFollowees(event: FollowListRequest){
         
         await this.tokenService.validateToken(event.token);
 
-        if(event.user == null) {
+        if(event.username == null) {
             throw new Error("[Bad Request] Request needs to have a follower alias");
         } else if(event.limit <= 0) {
             throw new Error("[Bad Request] Request needs to have a positive limit");
         }
-        let [users, hasMorePages] = await this.followDao.getFollowees(event.user.alias, event.limit, event.lastFollowUser == null ? null : event.lastFollowUser.alias);
+        let [users, hasMorePages] = await this.followDao.getFollowees(event.username, event.limit, event.lastItem == null ? null : event.lastItem.alias);
         return new FollowListResponse(true, hasMorePages, users);
     }
     async getFollowers(event: FollowListRequest){
         
         await this.tokenService.validateToken(event.token);
         
-        if(event.user == null) {
+        if(event.username == null) {
             throw new Error("[Bad Request] Request needs to have a follower alias");
         } else if(event.limit <= 0) {
             throw new Error("[Bad Request] Request needs to have a positive limit");
         }
-        let [users, hasMorePages] = await this.followDao.getFollowers(event.user.alias, event.limit, event.lastFollowUser == null ? null : event.lastFollowUser.alias);
+        let [users, hasMorePages] = await this.followDao.getFollowers(event.username, event.limit, event.lastItem == null ? null : event.lastItem.alias);
   
         return new FollowListResponse(true, hasMorePages, users) ;
     }

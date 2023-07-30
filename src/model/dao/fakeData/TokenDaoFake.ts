@@ -8,13 +8,13 @@ export class TokenDaoFake implements ITokenDao{
     async clearExpiredTokens(expireTimeInMinutes: number): Promise<void> {
         return;
     }
-    async getToken(token: string): Promise<AuthToken | null> {
-        return AuthToken.Generate();
+    async getToken(token: string): Promise<[AuthToken, string] | null> {
+        return [AuthToken.Generate(), '@allen'];
     }
     async updateTokenTimestamp(token: string, timestamp: number): Promise<void> {
         return;
     }
-    async putToken(token: AuthToken): Promise<void> {
+    async putToken(token: AuthToken, username: string): Promise<void> {
         return;
     }
     

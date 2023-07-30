@@ -77,6 +77,7 @@ export class UserDao {
             [PRIMARY_KEY]:  username,
         },
     };
+    console.log('get user params:\n' + JSON.stringify(params));
     return await ddbDocClient.send(new GetCommand(params)).then(data => {
       let userData = data.Item;
       if(userData != undefined){

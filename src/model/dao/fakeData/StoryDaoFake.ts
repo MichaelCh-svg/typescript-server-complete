@@ -9,8 +9,8 @@ export class StoryDaoFake implements IStoryDao {
     async getStoryList(request: StoryFeedRequest): Promise<[Status[], boolean]> {
         let allStatuses = this.fakeData.fakeStatuses;
 
-        let statusIndex = request.lastStatus == null ? 0 : allStatuses.findIndex(status => status.user.alias == request.lastStatus?.user.alias && status.timestamp == request.lastStatus.timestamp);
-        if(statusIndex == -1) throw Error("status not found for status:\n" + JSON.stringify(request.lastStatus));
+        let statusIndex = request.lastItem == null ? 0 : allStatuses.findIndex(status => status.user.alias == request.lastItem?.user.alias && status.timestamp == request.lastItem.timestamp);
+        if(statusIndex == -1) throw Error("status not found for status:\n" + JSON.stringify(request.lastItem));
         
         let length = allStatuses.length;
         let remainingStatusesCount = length -statusIndex;
